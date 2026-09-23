@@ -1,0 +1,3953 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NBA Legends: Ultimate GOAT Basketball</title>
+  <meta name="description" content="Game simulasi basket arcade realistis dengan 20 legenda basket terhebat sepanjang sejarah, bursa transfer pemain, sistem piala, dan kontrol lengkap.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0d14;
+      --bg-card: #131826;
+      --bg-card-hover: #1a2236;
+      --accent-orange: #ff6a00;
+      --accent-gold: #ffb800;
+      --accent-cyan: #00e5ff;
+      --accent-green: #00ff88;
+      --accent-red: #ff3366;
+      --text-main: #f0f4fc;
+      --text-muted: #8a99b5;
+      --court-wood-1: #d99144;
+      --court-wood-2: #c67d32;
+      --court-lines: #ffffff;
+      --court-paint: #991b1b;
+      --glow-orange: rgba(255, 106, 0, 0.4);
+      --glow-gold: rgba(255, 184, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Header */
+    header {
+      background: rgba(13, 17, 27, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.5);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-gold));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 20px var(--glow-orange);
+      transform: rotate(-5deg);
+    }
+
+    .brand-title {
+      font-family: 'Teko', sans-serif;
+      font-size: 32px;
+      line-height: 0.9;
+      letter-spacing: 1px;
+      background: linear-gradient(to right, #fff, var(--accent-gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      color: var(--accent-orange);
+      text-transform: uppercase;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, var(--accent-orange), #ff4800);
+      color: #fff;
+      box-shadow: 0 4px 15px var(--glow-orange);
+    }
+
+    /* Header Stats & Wallet */
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .wallet-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(255, 184, 0, 0.15), rgba(255, 106, 0, 0.1));
+      border: 1px solid rgba(255, 184, 0, 0.35);
+      padding: 6px 14px;
+      border-radius: 25px;
+      box-shadow: 0 0 15px rgba(255, 184, 0, 0.15);
+    }
+
+    .wallet-icon {
+      font-size: 18px;
+      color: var(--accent-gold);
+    }
+
+    .wallet-amount {
+      font-family: 'Teko', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffde59;
+      letter-spacing: 0.5px;
+    }
+
+    .active-legend-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 5px 12px 5px 6px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .active-legend-badge:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-orange);
+    }
+
+    .active-legend-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-gold);
+      background: #222;
+    }
+
+    .active-legend-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .active-legend-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .active-legend-ovr {
+      font-size: 10px;
+      color: var(--accent-gold);
+      font-weight: 800;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 20px;
+      max-width: 1350px;
+      margin: 0 auto;
+      width: 100%;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================
+       COURT TAB / MATCH INTERFACE
+       ========================================= */
+    #tab-court {
+      padding: 10px 15px 25px;
+      max-width: 1400px;
+    }
+
+    .court-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .scoreboard-hud {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(19, 24, 38, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 8px 24px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+
+    .score-team {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .score-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-gold);
+      object-fit: cover;
+      background: #111;
+    }
+
+    .score-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .score-name {
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .score-tag {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .score-digits {
+      font-family: 'Teko', sans-serif;
+      font-size: 50px;
+      font-weight: 700;
+      line-height: 0.9;
+      color: #fff;
+      min-width: 45px;
+      text-align: center;
+    }
+
+    .score-digits.user {
+      color: var(--accent-cyan);
+      text-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+    }
+
+    .score-digits.cpu {
+      color: var(--accent-red);
+      text-shadow: 0 0 15px rgba(255, 51, 102, 0.5);
+    }
+
+    .match-clock {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 15px;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .clock-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+    }
+
+    .clock-time {
+      font-family: 'Teko', sans-serif;
+      font-size: 40px;
+      line-height: 0.9;
+      color: #fff;
+    }
+
+    .shot-clock {
+      font-family: 'Teko', sans-serif;
+      font-size: 24px;
+      color: var(--accent-orange);
+      line-height: 0.9;
+    }
+
+    .court-controls-panel {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 9px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .btn-action.primary {
+      background: linear-gradient(135deg, var(--accent-orange), #ff3700);
+      border: none;
+      box-shadow: 0 4px 15px var(--glow-orange);
+    }
+
+    .btn-action.primary:hover {
+      box-shadow: 0 6px 20px rgba(255, 106, 0, 0.6);
+    }
+
+    /* Game Canvas Container */
+    .canvas-wrapper {
+      position: relative;
+      width: 100%;
+      height: 580px;
+      background: #000;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    #courtCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+    }
+
+    /* On-canvas HUD elements */
+    .canvas-overlay-notification {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(13, 17, 27, 0.85);
+      border: 2px solid var(--accent-gold);
+      box-shadow: 0 0 30px var(--glow-gold);
+      padding: 10px 30px;
+      border-radius: 30px;
+      font-family: 'Teko', sans-serif;
+      font-size: 32px;
+      letter-spacing: 1px;
+      color: #fff;
+      text-transform: uppercase;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      z-index: 15;
+    }
+
+    .canvas-overlay-notification.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Shot Meter Floating UI */
+    #shotMeterHUD {
+      position: absolute;
+      display: none;
+      width: 140px;
+      height: 20px;
+      background: rgba(0,0,0,0.8);
+      border: 2px solid #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      pointer-events: none;
+      box-shadow: 0 0 15px rgba(0,0,0,0.8);
+      z-index: 10;
+    }
+
+    #shotMeterHUD .green-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background: #00ff88;
+      box-shadow: 0 0 10px #00ff88;
+    }
+
+    #shotMeterHUD .indicator-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #ffffff;
+      box-shadow: 0 0 8px #ffffff;
+      transform: translateX(-50%);
+    }
+
+    /* Match Overlay (Game Over / Start) */
+    .match-modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 11, 18, 0.88);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .match-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-banner {
+      font-family: 'Teko', sans-serif;
+      font-size: 64px;
+      line-height: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .modal-banner.win {
+      color: var(--accent-gold);
+      text-shadow: 0 0 30px var(--glow-gold);
+    }
+
+    .modal-banner.lose {
+      color: var(--accent-red);
+      text-shadow: 0 0 30px rgba(255, 51, 102, 0.5);
+    }
+
+    .modal-subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+      max-width: 500px;
+    }
+
+    .match-rewards-box {
+      display: flex;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px 30px;
+      border-radius: 16px;
+      margin-bottom: 30px;
+    }
+
+    .reward-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .reward-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .reward-val {
+      font-family: 'Teko', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      line-height: 1;
+    }
+
+    /* Virtual Mobile / Desktop On-Screen Controls */
+    .touch-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .virtual-dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 50px);
+      grid-template-rows: repeat(3, 50px);
+      gap: 6px;
+    }
+
+    .dpad-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.1s, transform 0.1s;
+    }
+
+    .dpad-btn:active, .dpad-btn.pressed {
+      background: var(--accent-orange);
+      transform: scale(0.92);
+    }
+
+    .virtual-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .v-action-btn {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: none;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      transition: transform 0.1s, filter 0.1s;
+      text-transform: uppercase;
+    }
+
+    .v-action-btn:active, .v-action-btn.pressed {
+      transform: scale(0.9);
+      filter: brightness(1.2);
+    }
+
+    .v-action-btn.shoot {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+    }
+
+    .v-action-btn.dunk {
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      box-shadow: 0 4px 15px rgba(255, 75, 43, 0.4);
+    }
+
+    .v-action-btn.jump {
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: #111;
+      box-shadow: 0 4px 15px rgba(255, 210, 0, 0.4);
+    }
+
+    .v-action-btn.block {
+      background: linear-gradient(135deg, #8a2387, #e94057);
+      box-shadow: 0 4px 15px rgba(233, 64, 87, 0.4);
+    }
+
+    .v-action-btn.sprint {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      color: #000;
+      box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+    }
+
+    .key-badge {
+      font-size: 9px;
+      opacity: 0.8;
+      background: rgba(0,0,0,0.3);
+      padding: 1px 4px;
+      border-radius: 4px;
+      margin-top: 2px;
+    }
+
+    /* =========================================
+       TRANSFER MARKET & ROSTER UI
+       ========================================= */
+    .market-filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip.active, .filter-chip:hover {
+      background: var(--accent-orange);
+      color: #fff;
+      border-color: var(--accent-orange);
+      box-shadow: 0 2px 10px var(--glow-orange);
+    }
+
+    .search-sort-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      width: 220px;
+      transition: border 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .sort-select {
+      background: #151b2a;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Player Cards Grid */
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 22px;
+    }
+
+    .player-card {
+      background: linear-gradient(165deg, #182033, #0f1422);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+    }
+
+    .player-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255, 184, 0, 0.5);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 20px rgba(255, 184, 0, 0.2);
+    }
+
+    .player-card.active-selected {
+      border: 2px solid var(--accent-cyan);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.35);
+    }
+
+    .card-top-banner {
+      height: 180px;
+      position: relative;
+      background: radial-gradient(circle at center, #263352, #101625);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .card-team-bg {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-family: 'Teko', sans-serif;
+      font-size: 70px;
+      line-height: 0.8;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+    }
+
+    .card-badge-ovr {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      padding: 6px 10px;
+      border-radius: 12px;
+      z-index: 5;
+    }
+
+    .badge-ovr-num {
+      font-family: 'Teko', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 0.85;
+      color: var(--accent-gold);
+    }
+
+    .badge-pos {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .card-player-photo {
+      height: 170px;
+      width: auto;
+      max-width: 90%;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
+      z-index: 2;
+      transition: transform 0.3s;
+    }
+
+    .player-card:hover .card-player-photo {
+      transform: scale(1.05);
+    }
+
+    .card-content {
+      padding: 16px 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-header-info {
+      margin-bottom: 12px;
+    }
+
+    .card-team-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-orange);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .card-player-name {
+      font-family: 'Teko', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+      margin-top: 2px;
+    }
+
+    .card-meta-line {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* Radar/Bar Stats */
+    .card-stats-bars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 14px;
+      margin: 12px 0 16px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 10px 12px;
+      border-radius: 12px;
+    }
+
+    .stat-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .stat-label-wrap {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .stat-name {
+      color: var(--text-muted);
+    }
+
+    .stat-val {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .stat-progress-bg {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .stat-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(to right, var(--accent-orange), var(--accent-gold));
+    }
+
+    /* Card Footer & Action Buttons */
+    .card-footer-action {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .card-price-tag {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .price-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .price-value {
+      font-family: 'Teko', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      line-height: 0.9;
+    }
+
+    .btn-card-action {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-buy {
+      background: linear-gradient(135deg, var(--accent-gold), #ff8800);
+      color: #000;
+    }
+
+    .btn-buy:hover {
+      box-shadow: 0 4px 15px var(--glow-gold);
+      transform: scale(1.03);
+    }
+
+    .btn-sell {
+      background: rgba(255, 51, 102, 0.2);
+      border: 1px solid var(--accent-red);
+      color: #ff99b3;
+    }
+
+    .btn-sell:hover {
+      background: var(--accent-red);
+      color: #fff;
+    }
+
+    .btn-select {
+      background: linear-gradient(135deg, var(--accent-cyan), #0077ff);
+      color: #fff;
+    }
+
+    .btn-select:hover {
+      box-shadow: 0 4px 15px rgba(0, 229, 255, 0.5);
+    }
+
+    .btn-selected {
+      background: rgba(0, 229, 255, 0.2);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      cursor: default;
+    }
+
+    /* =========================================
+       TROPHY ROOM UI
+       ========================================= */
+    .trophy-header-banner {
+      background: linear-gradient(135deg, rgba(255, 184, 0, 0.1), rgba(255, 106, 0, 0.05));
+      border: 1px solid rgba(255, 184, 0, 0.3);
+      padding: 25px 35px;
+      border-radius: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .trophy-title-box h2 {
+      font-family: 'Teko', sans-serif;
+      font-size: 42px;
+      line-height: 0.9;
+      color: #ffdf59;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .trophy-title-box p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .trophies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .trophy-card {
+      background: #141a29;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .trophy-card.unlocked {
+      border-color: rgba(255, 215, 0, 0.4);
+      background: linear-gradient(180deg, #1a2236, #121827);
+      box-shadow: 0 10px 30px rgba(255, 184, 0, 0.15);
+    }
+
+    .trophy-card.locked {
+      filter: grayscale(0.85);
+      opacity: 0.65;
+    }
+
+    .trophy-icon-3d {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 184, 0, 0.2), transparent);
+      box-shadow: 0 0 25px rgba(255, 184, 0, 0.2);
+    }
+
+    .trophy-name {
+      font-family: 'Teko', sans-serif;
+      font-size: 28px;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .trophy-card.unlocked .trophy-name {
+      color: var(--accent-gold);
+    }
+
+    .trophy-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    .trophy-status-pill {
+      margin-top: auto;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trophy-status-pill.unlocked {
+      background: rgba(0, 255, 136, 0.15);
+      color: var(--accent-green);
+      border: 1px solid var(--accent-green);
+    }
+
+    .trophy-status-pill.locked {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* =========================================
+       CONTROLS & GUIDE MODAL / TAB
+       ========================================= */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .guide-card {
+      background: #141a29;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .guide-card h3 {
+      font-family: 'Teko', sans-serif;
+      font-size: 26px;
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .guide-key-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+    }
+
+    .guide-key-row:last-child {
+      border-bottom: none;
+    }
+
+    .key-pill {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Toast Notification */
+    #toastMessage {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: rgba(13, 17, 27, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--accent-gold);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      padding: 14px 24px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #fff;
+      transform: translateY(120px);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+    }
+
+    #toastMessage.show {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .scoreboard-hud {
+        width: 100%;
+        justify-content: space-around;
+        padding: 8px 12px;
+      }
+      .canvas-wrapper {
+        height: 400px;
+      }
+      .v-action-btn {
+        width: 62px;
+        height: 62px;
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div class="brand" onclick="switchTab('court')">
+      <div class="brand-logo">🏀</div>
+      <div>
+        <div class="brand-title">NBA Legends</div>
+        <div class="brand-subtitle">Ultimate GOAT Edition</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-btn active" id="btn-tab-court" onclick="switchTab('court')">
+        <span>🏟️</span> Lapangan
+      </button>
+      <button class="nav-btn" id="btn-tab-roster" onclick="switchTab('roster')">
+        <span>👥</span> Skuad Saya (<span id="rosterCountBadge">1</span>)
+      </button>
+      <button class="nav-btn" id="btn-tab-market" onclick="switchTab('market')">
+        <span>🛒</span> Bursa Transfer
+      </button>
+      <button class="nav-btn" id="btn-tab-trophy" onclick="switchTab('trophy')">
+        <span>🏆</span> Ruang Piala (<span id="trophyCountBadge">0/7</span>)
+      </button>
+      <button class="nav-btn" id="btn-tab-guide" onclick="switchTab('guide')">
+        <span>❓</span> Panduan
+      </button>
+    </nav>
+
+    <!-- Header Stats & Wallet -->
+    <div class="header-stats">
+      <div class="wallet-badge" title="Saldo Kas Tim Anda">
+        <span class="wallet-icon">💵</span>
+        <span class="wallet-amount" id="headerWalletText">$10,000</span>
+      </div>
+
+      <div class="active-legend-badge" onclick="switchTab('roster')" title="Klik untuk ganti pemain">
+        <img src="" id="headerActiveAvatar" class="active-legend-avatar" alt="Player">
+        <div class="active-legend-info">
+          <span class="active-legend-name" id="headerActiveName">M. Jordan</span>
+          <span class="active-legend-ovr" id="headerActiveOVR">OVR 99 • SG</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- TAB 1: COURT MATCH -->
+    <section id="tab-court" class="tab-content active">
+      <div class="court-header-bar">
+        <!-- Scoreboard HUD -->
+        <div class="scoreboard-hud">
+          <!-- User Player -->
+          <div class="score-team">
+            <img src="" id="hudUserAvatar" class="score-avatar" alt="User">
+            <div class="score-details">
+              <span class="score-name" id="hudUserName">PLAYER</span>
+              <span class="score-tag">USER TEAM</span>
+            </div>
+            <div class="score-digits user" id="hudUserScore">0</div>
+          </div>
+
+          <!-- Match Clock & Shot Clock -->
+          <div class="match-clock">
+            <span class="clock-label">MATCH TIME</span>
+            <span class="clock-time" id="hudMatchTime">02:00</span>
+            <div style="display:flex; align-items:center; gap:5px;">
+              <span style="font-size:10px; color:var(--text-muted);">SHOT:</span>
+              <span class="shot-clock" id="hudShotClock">24</span>
+            </div>
+          </div>
+
+          <!-- CPU Opponent -->
+          <div class="score-team">
+            <div class="score-digits cpu" id="hudCpuScore">0</div>
+            <div class="score-details" style="text-align: right;">
+              <span class="score-name" id="hudCpuName">K. BRYANT</span>
+              <span class="score-tag">CPU RIVAL</span>
+            </div>
+            <img src="" id="hudCpuAvatar" class="score-avatar" alt="CPU">
+          </div>
+        </div>
+
+        <!-- Match Options & Difficulty -->
+        <div class="court-controls-panel">
+          <button class="btn-action" onclick="changeOpponent()">
+            <span>🔄</span> Ganti Lawan
+          </button>
+          <button class="btn-action primary" id="btnMatchToggle" onclick="toggleMatchState()">
+            <span>▶️</span> Mulai Pertandingan
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Area -->
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <canvas id="courtCanvas"></canvas>
+
+        <!-- Dynamic Shot Meter Floating Bar -->
+        <div id="shotMeterHUD">
+          <div class="green-zone" id="shotMeterGreen"></div>
+          <div class="indicator-line" id="shotMeterIndicator"></div>
+        </div>
+
+        <!-- Big Splash Notification Text -->
+        <div class="canvas-overlay-notification" id="canvasNotification">GREEN RELEASE!</div>
+
+        <!-- Match Over Modal / Start Overlay -->
+        <div class="match-modal-overlay" id="matchModalOverlay">
+          <div class="modal-banner win" id="modalBannerText">CHAMPIONSHIP VICTORY!</div>
+          <p class="modal-subtitle" id="modalSubtitleText">Pertandingan selesai! Anda mendominasi lapangan basket dengan gaya permainan memukau.</p>
+          
+          <div class="match-rewards-box">
+            <div class="reward-item">
+              <span class="reward-label">Skor Akhir</span>
+              <span class="reward-val" id="modalFinalScore">21 - 18</span>
+            </div>
+            <div class="reward-item">
+              <span class="reward-label">Uang Hadiah</span>
+              <span class="reward-val" id="modalPrizeMoney">+$3,500</span>
+            </div>
+            <div class="reward-item">
+              <span class="reward-label">Total Dunk</span>
+              <span class="reward-val" id="modalTotalDunks">3</span>
+            </div>
+            <div class="reward-item">
+              <span class="reward-label">Total Blok</span>
+              <span class="reward-val" id="modalTotalBlocks">2</span>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:15px;">
+            <button class="btn-action primary" style="font-size:16px; padding:12px 30px;" onclick="restartMatch()">
+              🏀 Main Lagi
+            </button>
+            <button class="btn-action" style="font-size:16px; padding:12px 25px;" onclick="switchTab('market')">
+              🛒 Buka Bursa Transfer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Controls Toolbar for Keyboard & Touch -->
+      <div class="touch-controls">
+        <!-- Virtual D-PAD for Mobile/Touch -->
+        <div class="virtual-dpad">
+          <div></div>
+          <button class="dpad-btn" id="dpad-up">▲</button>
+          <div></div>
+          <button class="dpad-btn" id="dpad-left">◀</button>
+          <div class="dpad-btn" style="background:rgba(255,255,255,0.02); border:none;">●</div>
+          <button class="dpad-btn" id="dpad-right">▶</button>
+          <div></div>
+          <button class="dpad-btn" id="dpad-down">▼</button>
+          <div></div>
+        </div>
+
+        <!-- Action Control Buttons -->
+        <div class="virtual-actions">
+          <!-- Sprint / Turbo -->
+          <button class="v-action-btn sprint" id="btnActionSprint">
+            <span>⚡ SPRINT</span>
+            <span class="key-badge">SHIFT</span>
+          </button>
+
+          <!-- Jump / Rebound -->
+          <button class="v-action-btn jump" id="btnActionJump">
+            <span>🚀 JUMP</span>
+            <span class="key-badge">L / W</span>
+          </button>
+
+          <!-- Block (Defense) -->
+          <button class="v-action-btn block" id="btnActionBlock">
+            <span>🛡️ BLOCK</span>
+            <span class="key-badge">B / K</span>
+          </button>
+
+          <!-- Layup / Dunk -->
+          <button class="v-action-btn dunk" id="btnActionDunk">
+            <span>💥 DUNK</span>
+            <span class="key-badge">K</span>
+          </button>
+
+          <!-- Shoot (Hold for Meter) -->
+          <button class="v-action-btn shoot" id="btnActionShoot">
+            <span>🎯 SHOOT</span>
+            <span class="key-badge">SPACE / J</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: MY ROSTER -->
+    <section id="tab-roster" class="tab-content">
+      <div class="market-filter-bar">
+        <div>
+          <h2 style="font-family:'Teko',sans-serif; font-size:38px; line-height:0.9;">SKUAD PEMAIN SAYA</h2>
+          <p style="font-size:13px; color:var(--text-muted);">Pilih bintang aktif untuk bertanding atau jual pemain untuk mendapatkan uang tunai tambahan.</p>
+        </div>
+        <button class="btn-action primary" onclick="switchTab('market')">
+          <span>➕</span> Beli Bintang Baru
+        </button>
+      </div>
+
+      <div class="players-grid" id="rosterGridContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 3: TRANSFER MARKET -->
+    <section id="tab-market" class="tab-content">
+      <div class="market-filter-bar">
+        <div>
+          <h2 style="font-family:'Teko',sans-serif; font-size:38px; line-height:0.9;">BURSA TRANSFER ALL-TIME LEGENDS</h2>
+          <p style="font-size:13px; color:var(--text-muted);">Rekrut 20 pemain terhebat sepanjang masa (GOAT) ke dalam tim Anda dengan uang hasil menang pertandingan.</p>
+        </div>
+
+        <div class="search-sort-box">
+          <input type="text" id="marketSearchInput" class="search-input" placeholder="Cari nama legenda..." oninput="renderMarket()">
+          <select id="marketSortSelect" class="sort-select" onchange="renderMarket()">
+            <option value="ovr-desc">Rating Tertinggi (OVR)</option>
+            <option value="price-asc">Harga Termurah</option>
+            <option value="price-desc">Harga Tertinggi</option>
+            <option value="dunk-desc">Dunk Terbaik</option>
+            <option value="3pt-desc">3-Point Terbaik</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Position Filters -->
+      <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+        <button class="filter-chip active" data-pos="ALL" onclick="setMarketFilter('ALL', this)">Semua Posisi (20)</button>
+        <button class="filter-chip" data-pos="PG" onclick="setMarketFilter('PG', this)">Point Guard (PG)</button>
+        <button class="filter-chip" data-pos="SG" onclick="setMarketFilter('SG', this)">Shooting Guard (SG)</button>
+        <button class="filter-chip" data-pos="SF" onclick="setMarketFilter('SF', this)">Small Forward (SF)</button>
+        <button class="filter-chip" data-pos="PF" onclick="setMarketFilter('PF', this)">Power Forward (PF)</button>
+        <button class="filter-chip" data-pos="C" onclick="setMarketFilter('C', this)">Center (C)</button>
+      </div>
+
+      <div class="players-grid" id="marketGridContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 4: TROPHY ROOM -->
+    <section id="tab-trophy" class="tab-content">
+      <div class="trophy-header-banner">
+        <div class="trophy-title-box">
+          <h2>KABINET TROFI KEJUARAAN</h2>
+          <p>Raih prestasi gemilang di atas lapangan kayu untuk membuka trofi legendaris dan bonus uang melimpah!</p>
+        </div>
+        <div style="display:flex; align-items:center; gap:15px;">
+          <div style="text-align:right;">
+            <div style="font-size:12px; color:var(--text-muted);">STATUS KOLEKSI</div>
+            <div style="font-family:'Teko',sans-serif; font-size:36px; color:var(--accent-gold); font-weight:700;" id="trophyTotalUnlockedText">0 / 7 TERBUKA</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trophies-grid" id="trophiesContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 5: GUIDE & CONTROLS -->
+    <section id="tab-guide" class="tab-content">
+      <h2 style="font-family:'Teko',sans-serif; font-size:38px; line-height:0.9;">PANDUAN & KONTROL MEKANIK BASKET</h2>
+      <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">Kuasai seluruh mekanik mulai dari lari sprint, dribble crossover, lompatan rebound, timing tembakan, layup, slam dunk dahsyat, hingga blok pertahanan.</p>
+
+      <div class="controls-grid">
+        <div class="guide-card">
+          <h3><span>🏃</span> Lari & Dribble</h3>
+          <div class="guide-key-row">
+            <span>Gerak 8 Arah</span>
+            <span class="key-pill">WASD / Tombol Panah</span>
+          </div>
+          <div class="guide-key-row">
+            <span>Sprint Cepat (Turbo)</span>
+            <span class="key-pill">Tahan SHIFT</span>
+          </div>
+          <div class="guide-key-row">
+            <span>Crossover Dribble</span>
+            <span class="key-pill">Ubah Arah Cepat</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:10px;">Gunakan sprint untuk melewati pemain bertahan dan memicu momentum Slam Dunk saat mendekat ke ring.</p>
+        </div>
+
+        <div class="guide-card">
+          <h3><span>🎯</span> Menembak (Shooting & Shot Meter)</h3>
+          <div class="guide-key-row">
+            <span>Mulai Tembakan</span>
+            <span class="key-pill">Tahan SPACE atau J</span>
+          </div>
+          <div class="guide-key-row">
+            <span>Green Release</span>
+            <span class="key-pill">Lepas di Zona Hijau</span>
+          </div>
+          <div class="guide-key-row">
+            <span>Tembakan 3-Angka</span>
+            <span class="key-pill">Di luar Busur 3PT</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:10px;">Perhatikan Shot Meter di atas kepala pemain. Lepas tombol saat jarum tepat di zona hijau untuk tembakan tanpa meleset (Swish!).</p>
+        </div>
+
+        <div class="guide-card">
+          <h3><span>💥</span> Layup & Slam Dunk</h3>
+          <div class="guide-key-row">
+            <span>Finger-Roll Layup</span>
+            <span class="key-pill">Tembak saat Dekat Ring</span>
+          </div>
+          <div class="guide-key-row">
+            <span>Posterizer Slam Dunk</span>
+            <span class="key-pill">Shift + Space / Tombol K</span>
+          </div>
+          <div class="guide-key-row">
+            <span>Goyangan Ring</span>
+            <span class="key-pill">Otomatis saat Dunk</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:10px;">Dekati ring sambil berlari kencang, lalu tekan tombol Dunk untuk aksi melayang di udara yang spektakuler!</p>
+        </div>
+
+        <div class="guide-card">
+          <h3><span>🛡️</span> Pertahanan & Blok (Block)</h3>
+          <div class="guide-key-row">
+            <span>Lompat Merebut Rebound</span>
+            <span class="key-pill">Tombol L atau Panah Atas</span>
+          </div>
+          <div class="guide-key-row">
+            <span>Blok Tembakan Musuh</span>
+            <span class="key-pill">Tombol B atau K</span>
+          </div>
+          <div class="guide-key-row">
+            <span>Steal / Rebut Bola</span>
+            <span class="key-pill">Tombol J saat Bertahan</span>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-top:10px;">Saat lawan hendak menembak atau dunk, lompatlah tepat waktu untuk menepis bola (Swat Block) dan menggagalkan poin mereka!</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Global Toast Notification -->
+  <div id="toastMessage">
+    <span id="toastIcon">✨</span>
+    <span id="toastText">Pesan pemberitahuan</span>
+  </div>
+
+  <script>
+    /* =======================================================
+       NBA LEGENDS: ULTIMATE GOAT BASKETBALL GAME ENGINE
+       ======================================================= */
+
+    // 1. SOUND SYSTEM (Procedural Web Audio API)
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playDribble() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = this.ctx.currentTime;
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(140, t);
+          osc.frequency.exponentialRampToValueAtTime(45, t + 0.09);
+
+          gain.gain.setValueAtTime(0.4, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.09);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.1);
+        } catch(e) {}
+      }
+
+      playSqueak() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = this.ctx.currentTime;
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(800 + Math.random() * 400, t);
+          osc.frequency.linearRampToValueAtTime(1600, t + 0.06);
+
+          gain.gain.setValueAtTime(0.08, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.08);
+        } catch(e) {}
+      }
+
+      playSwish() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          // White noise burst for clean net swish
+          const bufferSize = this.ctx.sampleRate * 0.25;
+          const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+
+          const noise = this.ctx.createBufferSource();
+          noise.buffer = buffer;
+
+          const filter = this.ctx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = 3200;
+          filter.Q.value = 2.0;
+
+          const gain = this.ctx.createGain();
+          const t = this.ctx.currentTime;
+          gain.gain.setValueAtTime(0.45, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          noise.start(t);
+        } catch(e) {}
+      }
+
+      playRimClank() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = this.ctx.currentTime;
+
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(440, t);
+          osc.frequency.exponentialRampToValueAtTime(220, t + 0.2);
+
+          gain.gain.setValueAtTime(0.3, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.2);
+        } catch(e) {}
+      }
+
+      playDunkImpact() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          // Low boom + metal ring rattle
+          const t = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(110, t);
+          osc.frequency.exponentialRampToValueAtTime(30, t + 0.35);
+
+          gain.gain.setValueAtTime(0.6, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.35);
+
+          this.playRimClank();
+          this.playCrowdCheer();
+        } catch(e) {}
+      }
+
+      playBlockSwat() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const t = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(300, t);
+          osc.frequency.exponentialRampToValueAtTime(80, t + 0.15);
+
+          gain.gain.setValueAtTime(0.5, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.15);
+        } catch(e) {}
+      }
+
+      playCrowdCheer() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const bufferSize = this.ctx.sampleRate * 0.8;
+          const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.sin((i / bufferSize) * Math.PI);
+          }
+
+          const noise = this.ctx.createBufferSource();
+          noise.buffer = buffer;
+
+          const filter = this.ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.value = 1400;
+
+          const gain = this.ctx.createGain();
+          gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          noise.start();
+        } catch(e) {}
+      }
+
+      playBuzzer() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const t = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, t);
+
+          gain.gain.setValueAtTime(0.5, t);
+          gain.gain.setValueAtTime(0.5, t + 0.6);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.8);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.8);
+        } catch(e) {}
+      }
+    }
+
+    const sound = new SoundEngine();
+
+    // 2. 20 ALL-TIME GREATEST BASKETBALL LEGENDS DATABASE
+    const ALL_TIME_LEGENDS = [
+      {
+        id: "jordan",
+        name: "Michael Jordan",
+        nickname: "His Airness",
+        team: "Chicago Bulls",
+        number: 23,
+        pos: "SG",
+        height: "198 cm",
+        ovr: 99,
+        stats: { spd: 97, dunk: 99, three: 86, mid: 99, blk: 89, def: 98, reb: 86 },
+        price: 25000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Michael_Jordan_in_2014.jpg/480px-Michael_Jordan_in_2014.jpg",
+        color1: "#CE1141",
+        color2: "#000000",
+        bio: "Juara NBA 6x, Finals MVP 6x. Dianggap secara universal sebagai pemain terhebat sepanjang masa dengan keahlian dunk dan fadeaway tak tertandingi."
+      },
+      {
+        id: "lebron",
+        name: "LeBron James",
+        nickname: "The King",
+        team: "LA Lakers",
+        number: 23,
+        pos: "SF",
+        height: "206 cm",
+        ovr: 98,
+        stats: { spd: 95, dunk: 98, three: 88, mid: 93, blk: 96, def: 95, reb: 95 },
+        price: 24000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/LeBron_James_%2851959977144%29_%28cropped2%29.jpg/480px-LeBron_James_%2851959977144%29_%28cropped2%29.jpg",
+        color1: "#552583",
+        color2: "#FDB927",
+        bio: "Top Scorer Sepanjang Masa NBA, 4x Juara & MVP. Kekuatan fisik monster, visi bermain magis, dan blok mengejar (chasedown block) yang melegenda."
+      },
+      {
+        id: "kobe",
+        name: "Kobe Bryant",
+        nickname: "Black Mamba",
+        team: "LA Lakers",
+        number: 24,
+        pos: "SG",
+        height: "198 cm",
+        ovr: 98,
+        stats: { spd: 95, dunk: 96, three: 91, mid: 99, blk: 87, def: 97, reb: 85 },
+        price: 23500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Kobe_Bryant_2014.jpg/480px-Kobe_Bryant_2014.jpg",
+        color1: "#552583",
+        color2: "#FDB927",
+        bio: "5x Juara NBA, pencetak 81 poin dalam satu laga. Mentalitas 'Mamba Mentality' dengan tembakan krusial di detik-detik penentu."
+      },
+      {
+        id: "curry",
+        name: "Stephen Curry",
+        nickname: "Chef Curry",
+        team: "Golden State",
+        number: 30,
+        pos: "PG",
+        height: "188 cm",
+        ovr: 97,
+        stats: { spd: 94, dunk: 72, three: 99, mid: 97, blk: 72, def: 84, reb: 76 },
+        price: 22000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Stephen_Curry_dribbling_2016_%28cropped%29.jpg/480px-Stephen_Curry_dribbling_2016_%28cropped%29.jpg",
+        color1: "#1D428A",
+        color2: "#FFC72C",
+        bio: "Penembak 3-angka terhebat dalam sejarah bola basket dunia. Mengubah permainan modern dengan jangkauan tembakan tanpa batas dan kelincahan dribble."
+      },
+      {
+        id: "shaq",
+        name: "Shaquille O'Neal",
+        nickname: "Diesel",
+        team: "LA Lakers",
+        number: 34,
+        pos: "C",
+        height: "216 cm",
+        ovr: 98,
+        stats: { spd: 85, dunk: 99, three: 50, mid: 78, blk: 99, def: 95, reb: 99 },
+        price: 22500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Shaquille_O%27Neal_October_2017.jpg/480px-Shaquille_O%27Neal_October_2017.jpg",
+        color1: "#552583",
+        color2: "#FDB927",
+        bio: "Pemain paling dominan dalam sejarah basket. Menghancurkan ring dengan dunk bertenaga badai dan pertahanan tak tertembus di bawah keranjang."
+      },
+      {
+        id: "magic",
+        name: "Magic Johnson",
+        nickname: "Showtime",
+        team: "LA Lakers",
+        number: 32,
+        pos: "PG",
+        height: "206 cm",
+        ovr: 97,
+        stats: { spd: 92, dunk: 87, three: 84, mid: 93, blk: 84, def: 89, reb: 91 },
+        price: 20000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Magic_Johnson_2011.jpg/480px-Magic_Johnson_2011.jpg",
+        color1: "#552583",
+        color2: "#FDB927",
+        bio: "Point guard bertubuh raksasa dengan umpan no-look paling ikonik di era Showtime Lakers. Mengoleksi 5 cincin juara NBA."
+      },
+      {
+        id: "bird",
+        name: "Larry Bird",
+        nickname: "Larry Legend",
+        team: "Boston Celtics",
+        number: 33,
+        pos: "SF",
+        height: "206 cm",
+        ovr: 97,
+        stats: { spd: 88, dunk: 81, three: 98, mid: 99, blk: 85, def: 92, reb: 93 },
+        price: 19500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Larry_Bird_lip.jpg/480px-Larry_Bird_lip.jpg",
+        color1: "#007A33",
+        color2: "#BA9653",
+        bio: "3x MVP berturut-turut, penembak jitu berdarah dingin dan master trash-talk yang selalu mengeksekusi tembakan penentu kemenangan."
+      },
+      {
+        id: "kareem",
+        name: "Kareem Abdul-Jabbar",
+        nickname: "The Captain",
+        team: "LA Lakers",
+        number: 33,
+        pos: "C",
+        height: "218 cm",
+        ovr: 98,
+        stats: { spd: 86, dunk: 96, three: 52, mid: 97, blk: 99, def: 97, reb: 98 },
+        price: 21000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Kareem_Abdul-Jabbar_May_2014.jpg/480px-Kareem_Abdul-Jabbar_May_2014.jpg",
+        color1: "#552583",
+        color2: "#FDB927",
+        bio: "6x MVP dan 6x Juara NBA dengan tembakan 'Skyhook' legendaris yang tidak pernah bisa diblok oleh siapapun di muka bumi."
+      },
+      {
+        id: "duncan",
+        name: "Tim Duncan",
+        nickname: "The Big Fundamental",
+        team: "San Antonio Spurs",
+        number: 21,
+        pos: "PF",
+        height: "211 cm",
+        ovr: 96,
+        stats: { spd: 84, dunk: 92, three: 65, mid: 95, blk: 98, def: 98, reb: 97 },
+        price: 18500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Tim_Duncan_head_2010.jpg/480px-Tim_Duncan_head_2010.jpg",
+        color1: "#C4CED4",
+        color2: "#000000",
+        bio: "Power forward terbaik sepanjang masa. Memimpin Spurs meraih 5 kejuaraan dengan tembakan pantul papan (bank shot) dan pertahanan baja."
+      },
+      {
+        id: "wilt",
+        name: "Wilt Chamberlain",
+        nickname: "The Big Dipper",
+        team: "Sixers / Lakers",
+        number: 13,
+        pos: "C",
+        height: "216 cm",
+        ovr: 98,
+        stats: { spd: 95, dunk: 99, three: 50, mid: 86, blk: 99, def: 97, reb: 99 },
+        price: 23000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Wilt_Chamberlain_3.jpg/480px-Wilt_Chamberlain_3.jpg",
+        color1: "#ED174C",
+        color2: "#002B5C",
+        bio: "Satu-satunya pemain yang mencetak 100 poin dalam satu pertandingan. Atlet dengan kekuatan dan lompatan vertikal manusia super."
+      },
+      {
+        id: "durant",
+        name: "Kevin Durant",
+        nickname: "Slim Reaper",
+        team: "Phoenix / Warriors",
+        number: 35,
+        pos: "SF",
+        height: "208 cm",
+        ovr: 97,
+        stats: { spd: 93, dunk: 94, three: 97, mid: 99, blk: 91, def: 89, reb: 89 },
+        price: 21500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Kevin_Durant_%28cropped%29.jpg/480px-Kevin_Durant_%28cropped%29.jpg",
+        color1: "#1D1160",
+        color2: "#E56020",
+        bio: "Mesin pencetak poin tak terhentikan dengan tinggi 208 cm dan tembakan halus berakurasi mematikan di setiap jengkal lapangan."
+      },
+      {
+        id: "russell",
+        name: "Bill Russell",
+        nickname: "Mr. 11 Rings",
+        team: "Boston Celtics",
+        number: 6,
+        pos: "C",
+        height: "208 cm",
+        ovr: 97,
+        stats: { spd: 91, dunk: 89, three: 50, mid: 81, blk: 99, def: 99, reb: 99 },
+        price: 20500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Bill_Russell_1974.jpg/480px-Bill_Russell_1974.jpg",
+        color1: "#007A33",
+        color2: "#FFFFFF",
+        bio: "Pemenang terbesar dalam sejarah olahraga tim: 11 gelar juara NBA dalam 13 musim. Master blok dan kepemimpinan defensif."
+      },
+      {
+        id: "hakeem",
+        name: "Hakeem Olajuwon",
+        nickname: "The Dream",
+        team: "Houston Rockets",
+        number: 34,
+        pos: "C",
+        height: "213 cm",
+        ovr: 97,
+        stats: { spd: 90, dunk: 96, three: 62, mid: 94, blk: 99, def: 99, reb: 97 },
+        price: 21000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Hakeem_Olajuwon_2008.jpg/480px-Hakeem_Olajuwon_2008.jpg",
+        color1: "#CE1141",
+        color2: "#FDB927",
+        bio: "Pencipta gerakan gerak tipu 'Dream Shake'. Pemegang rekor blok terbanyak sepanjang masa dan peraih MVP serta DPOY di tahun yang sama."
+      },
+      {
+        id: "iverson",
+        name: "Allen Iverson",
+        nickname: "The Answer",
+        team: "Philadelphia 76ers",
+        number: 3,
+        pos: "PG",
+        height: "183 cm",
+        ovr: 96,
+        stats: { spd: 99, dunk: 83, three: 87, mid: 96, blk: 72, def: 91, reb: 72 },
+        price: 17500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Allen_Iverson_lip.jpg/480px-Allen_Iverson_lip.jpg",
+        color1: "#002B5C",
+        color2: "#ED174C",
+        bio: "Pemain paling lincah dengan gerakan crossover paling mematikan. Menginspirasi budaya basket dunia dengan keberanian melawan raksasa."
+      },
+      {
+        id: "giannis",
+        name: "Giannis Antetokounmpo",
+        nickname: "Greek Freak",
+        team: "Milwaukee Bucks",
+        number: 34,
+        pos: "PF",
+        height: "211 cm",
+        ovr: 97,
+        stats: { spd: 96, dunk: 99, three: 78, mid: 88, blk: 97, def: 97, reb: 97 },
+        price: 22000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Giannis_Antetokounmpo_vs_Wizards_%28cropped%29.jpg/480px-Giannis_Antetokounmpo_vs_Wizards_%28cropped%29.jpg",
+        color1: "#00471B",
+        color2: "#EEE1C6",
+        bio: "Juara NBA & 2x MVP. Bergerak dari garis 3-poin hingga dunk hanya dengan satu dribble dan langkah Euro-step raksasa."
+      },
+      {
+        id: "dirk",
+        name: "Dirk Nowitzki",
+        nickname: "German Wunderkind",
+        team: "Dallas Mavericks",
+        number: 41,
+        pos: "PF",
+        height: "213 cm",
+        ovr: 95,
+        stats: { spd: 83, dunk: 83, three: 96, mid: 98, blk: 84, def: 83, reb: 94 },
+        price: 17000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Dirk_Nowitzki_2018.jpg/480px-Dirk_Nowitzki_2018.jpg",
+        color1: "#00538C",
+        color2: "#002B5E",
+        bio: "Membawa Dallas meraih gelar bersejarah 2011 dengan tembakan satu kaki fadeaway legendaris yang mustahil diantisipasi."
+      },
+      {
+        id: "kawhi",
+        name: "Kawhi Leonard",
+        nickname: "The Claw",
+        team: "LA Clippers / Spurs",
+        number: 2,
+        pos: "SF",
+        height: "201 cm",
+        ovr: 96,
+        stats: { spd: 91, dunk: 94, three: 91, mid: 97, blk: 89, def: 99, reb: 89 },
+        price: 18500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Kawhi_Leonard_2020.jpg/480px-Kawhi_Leonard_2020.jpg",
+        color1: "#1D428A",
+        color2: "#C8102E",
+        bio: "2x Finals MVP & Defensive Player of the Year dengan telapak tangan raksasa pemangsa bola dan tembakan midrange otomatis."
+      },
+      {
+        id: "wade",
+        name: "Dwyane Wade",
+        nickname: "Flash",
+        team: "Miami Heat",
+        number: 3,
+        pos: "SG",
+        height: "193 cm",
+        ovr: 95,
+        stats: { spd: 98, dunk: 95, three: 81, mid: 94, blk: 95, def: 94, reb: 83 },
+        price: 17500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Dwyane_Wade_2018.jpg/480px-Dwyane_Wade_2018.jpg",
+        color1: "#98002E",
+        color2: "#F9A01B",
+        bio: "3x Juara NBA dengan akselerasi kilat tak tertandingi dan rekor guard pemblok tembakan terbanyak dalam sejarah playoff."
+      },
+      {
+        id: "barkley",
+        name: "Charles Barkley",
+        nickname: "Sir Charles",
+        team: "Phoenix Suns",
+        number: 34,
+        pos: "PF",
+        height: "198 cm",
+        ovr: 95,
+        stats: { spd: 89, dunk: 96, three: 75, mid: 91, blk: 87, def: 88, reb: 98 },
+        price: 16500,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Charles_Barkley_lip.jpg/480px-Charles_Barkley_lip.jpg",
+        color1: "#1D1160",
+        color2: "#E56020",
+        bio: "MVP 1993 yang dikenal sebagai 'The Round Mound of Rebound'. Kekuatan dorong tubuh bawah tiada tanding saat fastbreak."
+      },
+      {
+        id: "rodman",
+        name: "Dennis Rodman",
+        nickname: "The Worm",
+        team: "Chicago Bulls",
+        number: 91,
+        pos: "PF",
+        height: "201 cm",
+        ovr: 94,
+        stats: { spd: 93, dunk: 85, three: 55, mid: 72, blk: 95, def: 99, reb: 99 },
+        price: 16000,
+        photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Dennis_Rodman_lip.jpg/480px-Dennis_Rodman_lip.jpg",
+        color1: "#CE1141",
+        color2: "#000000",
+        bio: "Raja rebound 7 musim berturut-turut dan 5x juara NBA. Bertahan dengan intensitas gila, mengorbankan tubuh demi bola bebas."
+      }
+    ];
+
+    // 2.1 Image Fallback Generator (jika koneksi lambat/offline)
+    function getPlayerSVGFallback(p) {
+      const initials = p.name.split(' ').map(n => n[0]).join('');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="100%" height="100%">
+        <defs>
+          <linearGradient id="grad_${p.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${p.color1 || '#182033'}" />
+            <stop offset="100%" stop-color="${p.color2 || '#0b0f19'}" />
+          </linearGradient>
+        </defs>
+        <rect width="300" height="300" fill="url(#grad_${p.id})" rx="20"/>
+        <circle cx="150" cy="115" r="55" fill="#8a5836" />
+        <path d="M70,280 C70,190 230,190 230,280 Z" fill="${p.color1 || '#CE1141'}" />
+        <text x="150" y="255" fill="#ffffff" font-family="'Teko', sans-serif" font-size="60" font-weight="bold" text-anchor="middle">${p.number}</text>
+        <text x="150" y="130" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="34" font-weight="bold" text-anchor="middle">${initials}</text>
+      </svg>`;
+      return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+    }
+
+    function handleImageError(imgElem, legendId) {
+      const p = ALL_TIME_LEGENDS.find(l => l.id === legendId);
+      if (p) {
+        imgElem.src = getPlayerSVGFallback(p);
+      }
+    }
+
+    const TROPHY_DEFS = [
+      {
+        id: "rookie_win",
+        title: "Piala Kemenangan Pertama",
+        desc: "Menangkan pertandingan pertama Anda di lapangan basket.",
+        reward: 1500,
+        icon: "🏆"
+      },
+      {
+        id: "dunk_master",
+        title: "Juara Slam Dunk Contest",
+        desc: "Lakukan 5x Slam Dunk spektakuler yang menggetarkan ring.",
+        reward: 3000,
+        icon: "💥"
+      },
+      {
+        id: "sniper_3pt",
+        title: "Juara 3-Point Shootout",
+        desc: "Cetak 5x tembakan 3-angka dengan 'Green Release' sempurna.",
+        reward: 3500,
+        icon: "🎯"
+      },
+      {
+        id: "lockdown_block",
+        title: "Tembok Pertahanan Baja",
+        desc: "Lakukan 3x blok tepisan tembakan (Swat Block) terhadap lawan.",
+        reward: 3000,
+        icon: "🛡️"
+      },
+      {
+        id: "streak_champ",
+        title: "All-Star MVP Streak",
+        desc: "Raih 3 kemenangan berturut-turut tanpa pernah kalah.",
+        reward: 5000,
+        icon: "🔥"
+      },
+      {
+        id: "larry_obrien",
+        title: "Piala Larry O'Brien Championship",
+        desc: "Kalahkan musuh bebuyutan Michael Jordan dengan selisih minimal 5 poin.",
+        reward: 10000,
+        icon: "👑"
+      },
+      {
+        id: "hall_of_fame",
+        title: "Cincin Hall of Fame",
+        desc: "Miliki minimal 5 legenda basket dunia di dalam skuad Anda.",
+        reward: 15000,
+        icon: "💍"
+      }
+    ];
+
+    // 4. GAME STATE MANAGEMENT & PERSISTENCE
+    const defaultState = {
+      cash: 10000,
+      roster: ["jordan", "rodman"], // Start with Jordan & Rodman!
+      activePlayerId: "jordan",
+      trophies: [],
+      stats: {
+        totalWins: 0,
+        totalLosses: 0,
+        winStreak: 0,
+        totalDunks: 0,
+        total3pt: 0,
+        totalBlocks: 0
+      }
+    };
+
+    let gameState = { ...defaultState };
+
+    function loadSavedGame() {
+      try {
+        const saved = localStorage.getItem("nba_legends_save_v1");
+        if (saved) {
+          gameState = JSON.parse(saved);
+        }
+      } catch(e) {
+        console.warn("Could not load localStorage, using defaults", e);
+      }
+    }
+
+    function saveGame() {
+      try {
+        localStorage.setItem("nba_legends_save_v1", JSON.stringify(gameState));
+      } catch(e) {}
+      updateHeaderUI();
+    }
+
+    function showToast(msg, icon = "🏀") {
+      const toast = document.getElementById("toastMessage");
+      const text = document.getElementById("toastText");
+      const ic = document.getElementById("toastIcon");
+      text.innerText = msg;
+      ic.innerText = icon;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3500);
+    }
+
+    function checkTrophies() {
+      let newlyUnlocked = [];
+      TROPHY_DEFS.forEach(t => {
+        if (gameState.trophies.includes(t.id)) return;
+
+        let unlocked = false;
+        if (t.id === "rookie_win" && gameState.stats.totalWins >= 1) unlocked = true;
+        if (t.id === "dunk_master" && gameState.stats.totalDunks >= 5) unlocked = true;
+        if (t.id === "sniper_3pt" && gameState.stats.total3pt >= 5) unlocked = true;
+        if (t.id === "lockdown_block" && gameState.stats.totalBlocks >= 3) unlocked = true;
+        if (t.id === "streak_champ" && gameState.stats.winStreak >= 3) unlocked = true;
+        if (t.id === "hall_of_fame" && gameState.roster.length >= 5) unlocked = true;
+
+        if (unlocked) {
+          gameState.trophies.push(t.id);
+          gameState.cash += t.reward;
+          newlyUnlocked.push(t);
+        }
+      });
+
+      if (newlyUnlocked.length > 0) {
+        saveGame();
+        newlyUnlocked.forEach(t => {
+          showToast(`🏆 PIALA TERBUKA: ${t.title}! Hadiah +$${t.reward.toLocaleString()}`, "🏆");
+          sound.playCrowdCheer();
+        });
+        renderTrophies();
+      }
+    }
+
+    // 5. BASKETBALL MATCH ENGINE (CANVAS 2D PHYSICS & AI)
+    const canvas = document.getElementById("courtCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let courtWidth = 1000;
+    let courtHeight = 580;
+
+    function resizeCanvas() {
+      const wrapper = document.getElementById("canvasWrapper");
+      canvas.width = wrapper.clientWidth;
+      canvas.height = wrapper.clientHeight;
+      courtWidth = canvas.width;
+      courtHeight = canvas.height;
+    }
+    window.addEventListener("resize", resizeCanvas);
+
+    // Dynamic Court Coordinates
+    const hoop = {
+      x: 0,
+      y: 0,
+      rimRadius: 18,
+      rimOffset: 45, // distance from right baseline
+      backboardWidth: 8,
+      backboardHeight: 90,
+      shake: 0
+    };
+
+    function updateHoopPosition() {
+      hoop.x = courtWidth - 90;
+      hoop.y = courtHeight / 2;
+    }
+
+    // Match Variables
+    let matchRunning = false;
+    let userScore = 0;
+    let cpuScore = 0;
+    let matchSeconds = 120; // 2 minutes game
+    let shotClock = 24;
+    let clockInterval = null;
+
+    let matchMatchDunks = 0;
+    let matchMatchBlocks = 0;
+
+    // Ball Object
+    const ball = {
+      x: 0,
+      y: 0,
+      z: 0, // Height in 3D air
+      vx: 0,
+      vy: 0,
+      vz: 0,
+      radius: 12,
+      holder: null, // 'user', 'cpu', or null
+      isShot: false,
+      isDunk: false,
+      isLayup: false,
+      shotTargetX: 0,
+      shotTargetY: 0,
+      shotTargetZ: 0,
+      rot: 0,
+      trail: []
+    };
+
+    // User & CPU Players
+    let userLegend = null;
+    let cpuLegend = null;
+
+    const player = {
+      x: 250,
+      y: 290,
+      z: 0,
+      vx: 0,
+      vy: 0,
+      vz: 0,
+      speed: 5.5,
+      isSprinting: false,
+      stamina: 100,
+      isJumping: false,
+      isShooting: false,
+      isDunking: false,
+      isBlocking: false,
+      dunkAnimStep: 0,
+      facingRight: true,
+      dribbleTime: 0,
+      blockCooldown: 0,
+      stealCooldown: 0,
+      shotMeterActive: false,
+      shotMeterVal: 0,
+      shotMeterDirection: 1,
+      targetSweetSpot: 0.75
+    };
+
+    const cpu = {
+      x: 650,
+      y: 290,
+      z: 0,
+      vx: 0,
+      vy: 0,
+      vz: 0,
+      speed: 4.8,
+      isJumping: false,
+      isShooting: false,
+      isDunking: false,
+      isBlocking: false,
+      dunkAnimStep: 0,
+      facingRight: false,
+      dribbleTime: 0,
+      aiActionTimer: 0,
+      aiState: "patrol" // patrol, drive, shoot, defense
+    };
+
+    // Input States
+    const keys = {
+      up: false,
+      down: false,
+      left: false,
+      right: false,
+      shift: false,
+      shoot: false,
+      dunk: false,
+      jump: false,
+      block: false
+    };
+
+    // Keyboard Event Listeners
+    window.addEventListener("keydown", (e) => {
+      // prevent scrolling with space or arrows
+      if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
+        e.preventDefault();
+      }
+
+      if (!matchRunning) {
+        startMatch();
+      }
+
+      if (e.code === "ArrowUp" || e.code === "KeyW") keys.up = true;
+      if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = true;
+      if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = true;
+      if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = true;
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight") keys.shift = true;
+
+      // Shooting trigger (start charging Shot Meter)
+      if ((e.code === "Space" || e.code === "KeyJ") && !keys.shoot) {
+        keys.shoot = true;
+        handleShootPress();
+      }
+
+      // Dunk trigger
+      if (e.code === "KeyK") {
+        keys.dunk = true;
+        triggerUserDunk();
+      }
+
+      // Jump trigger
+      if (e.code === "KeyL") {
+        keys.jump = true;
+        triggerUserJump();
+      }
+
+      // Block trigger
+      if (e.code === "KeyB") {
+        keys.block = true;
+        triggerUserBlock();
+      }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "ArrowUp" || e.code === "KeyW") keys.up = false;
+      if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = false;
+      if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = false;
+      if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = false;
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight") keys.shift = false;
+
+      // Release shooting button to fire shot with meter timing
+      if (e.code === "Space" || e.code === "KeyJ") {
+        keys.shoot = false;
+        handleShootRelease();
+      }
+
+      if (e.code === "KeyK") keys.dunk = false;
+      if (e.code === "KeyL") keys.jump = false;
+      if (e.code === "KeyB") keys.block = false;
+    });
+
+    // Virtual Buttons & Touch Binding
+    function bindTouchButton(elemId, pressCallback, releaseCallback) {
+      const btn = document.getElementById(elemId);
+      if (!btn) return;
+      btn.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        btn.classList.add("pressed");
+        pressCallback();
+      });
+      btn.addEventListener("pointerup", (e) => {
+        e.preventDefault();
+        btn.classList.remove("pressed");
+        if (releaseCallback) releaseCallback();
+      });
+      btn.addEventListener("pointercancel", (e) => {
+        btn.classList.remove("pressed");
+        if (releaseCallback) releaseCallback();
+      });
+    }
+
+    function setupTouchControls() {
+      bindTouchButton("dpad-up", () => keys.up = true, () => keys.up = false);
+      bindTouchButton("dpad-down", () => keys.down = true, () => keys.down = false);
+      bindTouchButton("dpad-left", () => keys.left = true, () => keys.left = false);
+      bindTouchButton("dpad-right", () => keys.right = true, () => keys.right = false);
+
+      bindTouchButton("btnActionSprint", () => keys.shift = true, () => keys.shift = false);
+      bindTouchButton("btnActionJump", () => triggerUserJump());
+      bindTouchButton("btnActionBlock", () => triggerUserBlock());
+      bindTouchButton("btnActionDunk", () => triggerUserDunk());
+      bindTouchButton("btnActionShoot", () => handleShootPress(), () => handleShootRelease());
+    }
+
+    // 6. CORE GAMEPLAY MECHANICS IMPLEMENTATION
+    function triggerUserJump() {
+      if (player.z === 0 && !player.isShooting && !player.isDunking) {
+        player.vz = 9.5;
+        player.isJumping = true;
+        sound.playSqueak();
+      }
+    }
+
+    function triggerUserBlock() {
+      if (player.blockCooldown > 0) return;
+      player.isBlocking = true;
+      player.blockCooldown = 40;
+      if (player.z === 0) player.vz = 9.0;
+      sound.playSqueak();
+
+      // Check if enemy is in the middle of shooting/dunking nearby
+      if (ball.holder === 'cpu' || (ball.isShot && !ball.holder && ball.z > 20)) {
+        const dist = Math.hypot(player.x - cpu.x, player.y - cpu.y);
+        if (dist < 85 && (cpu.isShooting || cpu.isDunking || ball.isShot)) {
+          // Successful Block!
+          ball.holder = null;
+          ball.isShot = false;
+          ball.isDunk = false;
+          ball.vx = (player.facingRight ? 1 : -1) * (5 + Math.random() * 5);
+          ball.vy = (Math.random() - 0.5) * 8;
+          ball.vz = 4;
+          cpu.isShooting = false;
+          cpu.isDunking = false;
+
+          matchMatchBlocks++;
+          gameState.stats.totalBlocks++;
+          checkTrophies();
+          saveGame();
+
+          sound.playBlockSwat();
+          triggerSplashText(`BLOCKED BY ${userLegend.name.split(' ')[1].toUpperCase()}!`, "#ff3366");
+          addSparks(ball.x, ball.y - ball.z, 20, "#ff3366");
+        }
+      }
+    }
+
+    function triggerUserDunk() {
+      if (ball.holder !== 'user') return;
+      if (player.isDunking || player.isShooting) return;
+
+      const distToHoop = Math.hypot(player.x - (hoop.x - 20), player.y - hoop.y);
+      if (distToHoop < 240) {
+        // Initiate High-Flying Slam Dunk!
+        player.isDunking = true;
+        player.dunkAnimStep = 0;
+        player.hasSlammed = false;
+        ball.isDunk = true;
+        sound.playSqueak();
+      } else {
+        // Layup drive if slightly farther
+        triggerUserLayup();
+      }
+    }
+
+    function triggerUserLayup() {
+      if (ball.holder !== 'user') return;
+      player.isShooting = true;
+      ball.isLayup = true;
+      ball.holder = null;
+      ball.isShot = true;
+      ball.shooter = 'user';
+      ball.pointValue = 2;
+      ball.isSuccess = true;
+
+      // Arc to backboard/rim
+      ball.vx = (hoop.x - ball.x) / 30;
+      ball.vy = (hoop.y - ball.y) / 30;
+      ball.vz = 10;
+      sound.playSqueak();
+      triggerSplashText("FINGER ROLL LAYUP!", "#00e5ff");
+      setTimeout(() => { player.isShooting = false; }, 400);
+    }
+
+    function handleShootPress() {
+      if (ball.holder !== 'user') {
+        // If defending and pressing shoot/J -> attempt steal!
+        attemptSteal();
+        return;
+      }
+      if (player.isShooting || player.isDunking) return;
+
+      // Distance check: If close to hoop and running fast, trigger dunk or layup!
+      const distToHoop = Math.hypot(player.x - (hoop.x - 20), player.y - hoop.y);
+      if (distToHoop < 160 && keys.shift) {
+        triggerUserDunk();
+        return;
+      } else if (distToHoop < 120) {
+        triggerUserLayup();
+        return;
+      }
+
+      // Start Jump Shot & Shot Meter
+      player.isShooting = true;
+      player.isJumping = true;
+      if (player.z === 0) player.vz = 7.5;
+
+      player.shotMeterActive = true;
+      player.shotMeterVal = 0;
+      player.shotMeterDirection = 1;
+
+      // Position HUD Shot Meter above player's head
+      positionShotMeter();
+    }
+
+    function handleShootRelease() {
+      if (!player.shotMeterActive || ball.holder !== 'user') {
+        player.shotMeterActive = false;
+        document.getElementById("shotMeterHUD").style.display = "none";
+        return;
+      }
+
+      // Evaluate Shot Meter accuracy!
+      const val = player.shotMeterVal;
+      const target = player.targetSweetSpot;
+      const diff = Math.abs(val - target);
+
+      player.shotMeterActive = false;
+      document.getElementById("shotMeterHUD").style.display = "none";
+
+      ball.holder = null;
+      ball.isShot = true;
+      ball.shooter = 'user';
+
+      const isThreePoint = isThreePointShot(player.x, player.y);
+      let successChance = 0.5;
+
+      // Green Release zone
+      if (diff < 0.08) {
+        // Perfect release!
+        successChance = 0.98;
+        triggerSplashText("GREEN LIGHT! EXCELLENT RELEASE!", "#00ff88");
+        sound.playSwish();
+      } else if (diff < 0.18) {
+        // Slightly early/late
+        successChance = (isThreePoint ? userLegend.stats.three : userLegend.stats.mid) / 130;
+        triggerSplashText(val < target ? "SLIGHTLY EARLY" : "SLIGHTLY LATE", "#ffb800");
+      } else {
+        // Very early or very late
+        successChance = 0.15;
+        triggerSplashText("VERY LATE / CONTESTED", "#ff3366");
+      }
+
+      // Calculate trajectory towards the basket
+      const flightFrames = 42;
+      const targetX = hoop.x - 10;
+      const targetY = hoop.y + (successChance > Math.random() ? 0 : (Math.random() > 0.5 ? 24 : -24));
+      
+      ball.vx = (targetX - ball.x) / flightFrames;
+      ball.vy = (targetY - ball.y) / flightFrames;
+      ball.vz = 13; // Arc trajectory
+      ball.isSuccess = (targetY === hoop.y);
+      ball.pointValue = isThreePoint ? 3 : 2;
+
+      sound.playSqueak();
+      setTimeout(() => { player.isShooting = false; }, 400);
+    }
+
+    function attemptSteal() {
+      if (player.stealCooldown > 0 || ball.holder !== 'cpu') return;
+      player.stealCooldown = 40;
+      const dist = Math.hypot(player.x - cpu.x, player.y - cpu.y);
+      if (dist < 65) {
+        if (Math.random() < 0.45) {
+          ball.holder = 'user';
+          ball.vx = 0;
+          ball.vy = 0;
+          ball.vz = 0;
+          triggerSplashText("STEAL!", "#00e5ff");
+          sound.playSqueak();
+        }
+      }
+    }
+
+    function isThreePointShot(x, y) {
+      // 3-point line is an arc of radius 320 from hoop center
+      const dist = Math.hypot(x - hoop.x, y - hoop.y);
+      return dist > 300;
+    }
+
+    function positionShotMeter() {
+      const hud = document.getElementById("shotMeterHUD");
+      const green = document.getElementById("shotMeterGreen");
+      hud.style.display = "block";
+
+      // Calculate 2D screen coordinate of player's head
+      const screenX = player.x - 70;
+      const screenY = player.y - player.z - 75;
+      hud.style.left = `${screenX}px`;
+      hud.style.top = `${screenY}px`;
+
+      // Set green zone location (70% - 82%)
+      green.style.left = "70%";
+      green.style.width = "14%";
+    }
+
+    function triggerSplashText(text, color = "#ffb800") {
+      const notif = document.getElementById("canvasNotification");
+      notif.innerText = text;
+      notif.style.color = color;
+      notif.style.borderColor = color;
+      notif.style.boxShadow = `0 0 25px ${color}`;
+      notif.classList.add("show");
+      setTimeout(() => notif.classList.remove("show"), 1800);
+    }
+
+    // Possession Reset / Inbound
+    let possessionResetTimeout = null;
+    function schedulePossessionReset(nextPossession) {
+      if (possessionResetTimeout) clearTimeout(possessionResetTimeout);
+      possessionResetTimeout = setTimeout(() => {
+        resetPossession(nextPossession);
+      }, 950);
+    }
+
+    function resetPossession(nextPossession = 'cpu') {
+      shotClock = 24;
+      updateClockDisplay();
+      ball.isShot = false;
+      ball.isDunk = false;
+      ball.isLayup = false;
+      ball.vx = 0;
+      ball.vy = 0;
+      ball.vz = 0;
+      player.isDunking = false;
+      player.hasSlammed = false;
+      player.isShooting = false;
+      player.z = 0;
+      cpu.isDunking = false;
+      cpu.hasSlammed = false;
+      cpu.isShooting = false;
+      cpu.z = 0;
+
+      if (nextPossession === 'cpu') {
+        cpu.x = courtWidth * 0.45;
+        cpu.y = courtHeight / 2;
+        cpu.facingRight = true;
+        player.x = courtWidth * 0.65;
+        player.y = courtHeight / 2;
+        player.facingRight = false;
+        ball.holder = 'cpu';
+        ball.x = cpu.x;
+        ball.y = cpu.y;
+        ball.z = 10;
+        triggerSplashText(`${cpuLegend.name.split(' ').pop().toUpperCase()} POSSESSION`, "#ff3366");
+      } else {
+        player.x = courtWidth * 0.45;
+        player.y = courtHeight / 2;
+        player.facingRight = true;
+        cpu.x = courtWidth * 0.65;
+        cpu.y = courtHeight / 2;
+        cpu.facingRight = false;
+        ball.holder = 'user';
+        ball.x = player.x;
+        ball.y = player.y;
+        ball.z = 10;
+        triggerSplashText(`${userLegend.name.split(' ').pop().toUpperCase()} POSSESSION`, "#00e5ff");
+      }
+    }
+
+    // Particle System (Dunk Sparks & Floor Squeaks)
+    let particles = [];
+    function addSparks(x, y, count = 15, color = "#ff6a00") {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 8,
+          vy: (Math.random() - 0.5) * 8,
+          radius: 2 + Math.random() * 3,
+          color: color,
+          alpha: 1,
+          life: 25 + Math.random() * 20
+        });
+      }
+    }
+
+    // 7. MAIN GAME LOOP & PHYSICS UPDATE
+    function updateGame() {
+      if (!matchRunning) return;
+
+      // Update Player Movement & Sprint
+      player.speed = (keys.shift && player.stamina > 10) ? 7.8 : (userLegend.stats.spd / 17);
+      if (keys.shift && (keys.up || keys.down || keys.left || keys.right)) {
+        player.stamina = Math.max(0, player.stamina - 0.4);
+      } else {
+        player.stamina = Math.min(100, player.stamina + 0.3);
+      }
+
+      let dx = 0;
+      let dy = 0;
+      if (keys.up) dy -= 1;
+      if (keys.down) dy += 1;
+      if (keys.left) { dx -= 1; player.facingRight = false; }
+      if (keys.right) { dx += 1; player.facingRight = true; }
+
+      // Normalize diagonal speed
+      if (dx !== 0 && dy !== 0) {
+        dx *= 0.7071;
+        dy *= 0.7071;
+      }
+
+      player.vx = dx * player.speed;
+      player.vy = dy * player.speed;
+
+      // Apply positions with boundary checks
+      player.x = Math.max(40, Math.min(courtWidth - 40, player.x + player.vx));
+      player.y = Math.max(80, Math.min(courtHeight - 60, player.y + player.vy));
+
+      // Player Vertical Jump Physics
+      if (player.z > 0 || player.vz > 0) {
+        player.z += player.vz;
+        player.vz -= 0.55; // Gravity
+        if (player.z <= 0) {
+          player.z = 0;
+          player.vz = 0;
+          player.isJumping = false;
+          player.isBlocking = false;
+        }
+      }
+
+      // User Slam Dunk Execution
+      if (player.isDunking) {
+        player.dunkAnimStep += 0.045;
+        const targetX = hoop.x - 20;
+        const targetY = hoop.y;
+        player.x += (targetX - player.x) * 0.14;
+        player.y += (targetY - player.y) * 0.14;
+        player.z = Math.sin(player.dunkAnimStep * Math.PI) * 65;
+
+        if (player.dunkAnimStep < 0.7) {
+          ball.x = player.x + 8;
+          ball.y = player.y - 12;
+          ball.z = player.z + 18;
+        } else if (player.dunkAnimStep >= 0.7 && !player.hasSlammed) {
+          // SLAM! Execute once at the rim
+          player.hasSlammed = true;
+          hoop.shake = 20;
+          sound.playDunkImpact();
+          triggerSplashText("MONSTER SLAM DUNK! +2", "#ff6a00");
+          addSparks(hoop.x - 10, hoop.y, 35, "#ffb800");
+
+          // Score 2 points
+          userScore += 2;
+          matchMatchDunks++;
+          gameState.stats.totalDunks++;
+          checkTrophies();
+          saveGame();
+          updateScoreHUD();
+
+          // Ball drops down straight through the net onto the court!
+          ball.holder = null;
+          ball.isDunk = false;
+          ball.isShot = false;
+          ball.x = hoop.x - 10;
+          ball.y = hoop.y;
+          ball.z = 25;
+          ball.vz = -5; // Slam downwards!
+          ball.vx = -1.5;
+          ball.vy = (Math.random() - 0.5) * 2;
+
+          shotClock = 24;
+          schedulePossessionReset('cpu');
+        }
+
+        if (player.dunkAnimStep >= 1.0) {
+          player.isDunking = false;
+          player.hasSlammed = false;
+          player.dunkAnimStep = 0;
+          player.z = 0;
+          ball.isDunk = false;
+        }
+      }
+
+      // CPU Slam Dunk Execution
+      if (cpu.isDunking) {
+        cpu.dunkAnimStep += 0.045;
+        const targetX = hoop.x - 20;
+        const targetY = hoop.y;
+        cpu.x += (targetX - cpu.x) * 0.14;
+        cpu.y += (targetY - cpu.y) * 0.14;
+        cpu.z = Math.sin(cpu.dunkAnimStep * Math.PI) * 65;
+
+        if (cpu.dunkAnimStep < 0.7) {
+          ball.x = cpu.x + 8;
+          ball.y = cpu.y - 12;
+          ball.z = cpu.z + 18;
+        } else if (cpu.dunkAnimStep >= 0.7 && !cpu.hasSlammed) {
+          cpu.hasSlammed = true;
+          hoop.shake = 18;
+          sound.playDunkImpact();
+          triggerSplashText(`${cpuLegend.name.split(' ').pop().toUpperCase()} SLAM DUNKS! +2`, "#ff3366");
+          addSparks(hoop.x - 10, hoop.y, 35, "#ff3366");
+
+          cpuScore += 2;
+          updateScoreHUD();
+
+          ball.holder = null;
+          ball.isDunk = false;
+          ball.isShot = false;
+          ball.x = hoop.x - 10;
+          ball.y = hoop.y;
+          ball.z = 25;
+          ball.vz = -5;
+          ball.vx = -1.5;
+          ball.vy = (Math.random() - 0.5) * 2;
+
+          shotClock = 24;
+          schedulePossessionReset('user');
+        }
+
+        if (cpu.dunkAnimStep >= 1.0) {
+          cpu.isDunking = false;
+          cpu.hasSlammed = false;
+          cpu.dunkAnimStep = 0;
+          cpu.z = 0;
+          ball.isDunk = false;
+        }
+      }
+
+      // Shot Meter Update when charging
+      if (player.shotMeterActive) {
+        positionShotMeter();
+        player.shotMeterVal += 0.022 * player.shotMeterDirection;
+        if (player.shotMeterVal >= 1) {
+          player.shotMeterVal = 1;
+          player.shotMeterDirection = -1;
+        } else if (player.shotMeterVal <= 0) {
+          player.shotMeterVal = 0;
+          player.shotMeterDirection = 1;
+        }
+
+        const indicator = document.getElementById("shotMeterIndicator");
+        indicator.style.left = `${player.shotMeterVal * 100}%`;
+      }
+
+      // Dribble animation & sound when moving with ball
+      if (ball.holder === 'user' && !player.isShooting && !player.isDunking) {
+        player.dribbleTime += 0.18;
+        const bounceH = Math.abs(Math.sin(player.dribbleTime)) * 22;
+        ball.x = player.x + (player.facingRight ? 20 : -20);
+        ball.y = player.y + 12;
+        ball.z = bounceH;
+
+        if (bounceH < 2 && (player.vx !== 0 || player.vy !== 0)) {
+          sound.playDribble();
+        }
+      }
+
+      // CPU AI Logic & Movement (Active & Competitive)
+      updateCPUAI();
+
+      // Universal Ball In-Flight & Floor Physics (whenever free in the air)
+      if (!ball.holder && !player.isDunking && !cpu.isDunking) {
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+        ball.z += ball.vz;
+        ball.vz -= 0.55; // Gravity
+        ball.rot += 0.15;
+
+        // Check if ball reached hoop rim level during a shot
+        if (ball.isShot) {
+          const distToRim = Math.hypot(ball.x - hoop.x, ball.y - hoop.y);
+          if (distToRim < 30 && Math.abs(ball.z - 25) < 30 && ball.vz < 0) {
+            if (ball.isSuccess) {
+              // Basket made!
+              sound.playSwish();
+              hoop.shake = 10;
+              addSparks(hoop.x, hoop.y, 20, "#00ff88");
+              
+              const pts = ball.pointValue || 2;
+              if (ball.shooter === 'user') {
+                userScore += pts;
+                triggerSplashText(`+${pts} PTS! SWISH!`, "#00ff88");
+                if (pts === 3) {
+                  gameState.stats.total3pt++;
+                  checkTrophies();
+                  saveGame();
+                }
+                schedulePossessionReset('cpu');
+              } else {
+                cpuScore += pts;
+                triggerSplashText(`${cpuLegend.name.split(' ').pop().toUpperCase()} SCORES +${pts}!`, "#ff3366");
+                schedulePossessionReset('user');
+              }
+
+              updateScoreHUD();
+              ball.isShot = false;
+              ball.vz = -4; // Drops down through net
+              ball.vx = -1.5;
+            } else {
+              // Rim clank rebound!
+              sound.playRimClank();
+              hoop.shake = 12;
+              ball.vx = -4 - Math.random() * 4;
+              ball.vy = (Math.random() - 0.5) * 8;
+              ball.vz = 5 + Math.random() * 2;
+              ball.isShot = false;
+              ball.shooter = null;
+            }
+          }
+        }
+
+        // Bounce on hardwood floor
+        if (ball.z <= 0) {
+          ball.z = 0;
+          ball.vz = -ball.vz * 0.65;
+          ball.vx *= 0.82;
+          ball.vy *= 0.82;
+          if (Math.abs(ball.vz) > 1.2) {
+            sound.playDribble();
+          } else {
+            ball.vz = 0;
+          }
+        }
+
+        // Keep ball on court
+        ball.x = Math.max(40, Math.min(courtWidth - 40, ball.x));
+        ball.y = Math.max(60, Math.min(courtHeight - 60, ball.y));
+      }
+
+      // Ball Pick-up Detection (Rebound / Loose Ball)
+      if (!ball.holder && !player.isDunking && !cpu.isDunking && ball.z < 35) {
+        const userDist = Math.hypot(player.x - ball.x, player.y - ball.y);
+        const cpuDist = Math.hypot(cpu.x - ball.x, cpu.y - ball.y);
+
+        if (userDist < 38 && userDist <= cpuDist) {
+          ball.holder = 'user';
+          ball.vx = 0;
+          ball.vy = 0;
+          ball.vz = 0;
+          ball.isShot = false;
+          ball.isDunk = false;
+          sound.playDribble();
+        } else if (cpuDist < 38) {
+          ball.holder = 'cpu';
+          ball.vx = 0;
+          ball.vy = 0;
+          ball.vz = 0;
+          ball.isShot = false;
+          ball.isDunk = false;
+          sound.playDribble();
+        }
+      }
+
+      // Decay cooldowns & hoop shake
+      if (player.blockCooldown > 0) player.blockCooldown--;
+      if (player.stealCooldown > 0) player.stealCooldown--;
+      if (hoop.shake > 0) hoop.shake *= 0.9;
+    }
+
+    // CPU AI Controller (Active, Smart & Aggressive)
+    function updateCPUAI() {
+      if (cpu.isDunking || cpu.isShooting) return;
+
+      const baseSpeed = Math.max(4.0, (cpuLegend.stats.spd / 17));
+      cpu.speed = baseSpeed;
+
+      if (ball.holder === 'cpu') {
+        // --- BOT OFFENSE ---
+        cpu.aiActionTimer = (cpu.aiActionTimer || 0) + 1;
+        cpu.facingRight = (hoop.x > cpu.x);
+
+        const dx = hoop.x - 45 - cpu.x;
+        const dy = hoop.y - cpu.y;
+        const dist = Math.hypot(dx, dy);
+
+        // Natural dribble wiggle
+        const wiggle = Math.sin(cpu.aiActionTimer * 0.15) * 2.2;
+
+        if (dist > 160) {
+          // Drive actively toward basket!
+          cpu.vx = (dx / dist) * cpu.speed;
+          cpu.vy = (dy / dist) * cpu.speed + wiggle;
+        } else {
+          // Scoring zone: Dunk, Layup, or Pull-up Jumper!
+          if (dist < 130 && cpuLegend.stats.dunk >= 88 && Math.random() < 0.08) {
+            // CPU Slam Dunk!
+            cpu.isDunking = true;
+            cpu.dunkAnimStep = 0;
+            cpu.hasSlammed = false;
+            sound.playSqueak();
+          } else if (dist < 110) {
+            triggerCPULayup();
+          } else if (cpu.aiActionTimer > 45) {
+            triggerCPUShoot();
+          } else {
+            cpu.vx = (dx / dist) * (cpu.speed * 0.85);
+            cpu.vy = (dy / dist) * (cpu.speed * 0.85) + wiggle;
+          }
+        }
+
+        // Dribble animation for CPU
+        cpu.dribbleTime = (cpu.dribbleTime || 0) + 0.2;
+        const bounceH = Math.abs(Math.sin(cpu.dribbleTime)) * 22;
+        ball.x = cpu.x + (cpu.facingRight ? 18 : -18);
+        ball.y = cpu.y + 12;
+        ball.z = bounceH;
+        if (bounceH < 2 && Math.random() < 0.2) sound.playDribble();
+
+      } else if (ball.holder === 'user') {
+        // --- BOT DEFENSE (TIGHT MARKING, CONTEST & STEAL) ---
+        cpu.facingRight = (player.x > cpu.x);
+
+        // Guard position: Stay directly between player and basket (55px away)
+        const toHoopX = hoop.x - player.x;
+        const toHoopY = hoop.y - player.y;
+        const toHoopLen = Math.hypot(toHoopX, toHoopY) || 1;
+
+        const targetX = player.x + (toHoopX / toHoopLen) * 55;
+        const targetY = player.y + (toHoopY / toHoopLen) * 55;
+
+        const moveDx = targetX - cpu.x;
+        const moveDy = targetY - cpu.y;
+        const moveDist = Math.hypot(moveDx, moveDy);
+
+        if (moveDist > 10) {
+          cpu.vx = (moveDx / moveDist) * Math.min(cpu.speed * 1.15, moveDist);
+          cpu.vy = (moveDy / moveDist) * Math.min(cpu.speed * 1.15, moveDist);
+        } else {
+          cpu.vx = 0;
+          cpu.vy = 0;
+        }
+
+        const distToPlayer = Math.hypot(player.x - cpu.x, player.y - cpu.y);
+
+        // CPU Active Steal Attempt
+        cpu.stealTimer = (cpu.stealTimer || 0) + 1;
+        if (distToPlayer < 65 && cpu.stealTimer > 60 && Math.random() < 0.04) {
+          cpu.stealTimer = 0;
+          if (Math.random() < 0.35) {
+            ball.holder = 'cpu';
+            triggerSplashText(`${cpuLegend.name.split(' ').pop().toUpperCase()} STEALS THE BALL!`, "#ff3366");
+            sound.playSqueak();
+          }
+        }
+
+        // Contest / Block if player shoots or dunks
+        if ((player.isShooting || player.isDunking) && distToPlayer < 95 && cpu.z === 0) {
+          if (Math.random() < 0.2) {
+            cpu.vz = 9.0;
+            cpu.isBlocking = true;
+            sound.playSqueak();
+
+            // Chance to swat the ball if close!
+            if (distToPlayer < 65 && Math.random() < 0.35 && ball.z > 18) {
+              ball.holder = null;
+              ball.isShot = false;
+              ball.vx = -4 - Math.random() * 4;
+              ball.vy = (Math.random() - 0.5) * 6;
+              ball.vz = 4;
+              sound.playBlockSwat();
+              triggerSplashText(`BLOCKED BY ${cpuLegend.name.split(' ').pop().toUpperCase()}!`, "#ff3366");
+            }
+          }
+        }
+
+      } else {
+        // --- BOT REBOUND / CHASE LOOSE BALL ---
+        const dx = ball.x - cpu.x;
+        const dy = ball.y - cpu.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist > 15) {
+          cpu.vx = (dx / dist) * (cpu.speed * 1.3);
+          cpu.vy = (dy / dist) * (cpu.speed * 1.3);
+          cpu.facingRight = (dx > 0);
+        } else {
+          cpu.vx = 0;
+          cpu.vy = 0;
+        }
+
+        // Jump for high rebound
+        if (dist < 40 && ball.z > 20 && cpu.z === 0 && Math.random() < 0.15) {
+          cpu.vz = 9.0;
+          sound.playSqueak();
+        }
+      }
+
+      cpu.x += cpu.vx;
+      cpu.y += cpu.vy;
+
+      // Boundaries
+      cpu.x = Math.max(40, Math.min(courtWidth - 40, cpu.x));
+      cpu.y = Math.max(80, Math.min(courtHeight - 60, cpu.y));
+
+      // Vertical jump physics for CPU
+      if (cpu.z > 0 || cpu.vz > 0) {
+        cpu.z += cpu.vz;
+        cpu.vz -= 0.55;
+        if (cpu.z <= 0) {
+          cpu.z = 0;
+          cpu.vz = 0;
+          cpu.isBlocking = false;
+        }
+      }
+    }
+
+    function triggerCPULayup() {
+      ball.holder = null;
+      ball.isShot = true;
+      ball.shooter = 'cpu';
+      ball.pointValue = 2;
+      ball.isSuccess = Math.random() < (cpuLegend.stats.mid / 115);
+
+      ball.vx = (hoop.x - cpu.x) / 30;
+      ball.vy = (hoop.y - cpu.y) / 30;
+      ball.vz = 10;
+      sound.playSqueak();
+      cpu.aiActionTimer = 0;
+      triggerSplashText(`${cpuLegend.name.split(' ').pop().toUpperCase()} FINGER ROLL LAYUP`, "#ffb800");
+    }
+
+    function triggerCPUShoot() {
+      ball.holder = null;
+      ball.isShot = true;
+      ball.shooter = 'cpu';
+      const isThree = isThreePointShot(cpu.x, cpu.y);
+      ball.pointValue = isThree ? 3 : 2;
+      ball.isSuccess = Math.random() < ((isThree ? cpuLegend.stats.three : cpuLegend.stats.mid) / 125);
+
+      ball.vx = (hoop.x - cpu.x) / 40;
+      ball.vy = (hoop.y - cpu.y) / 40;
+      ball.vz = 12;
+      sound.playSqueak();
+      cpu.aiActionTimer = 0;
+      triggerSplashText(`${cpuLegend.name.split(' ').pop().toUpperCase()} PULL-UP JUMPER`, "#ffb800");
+    }
+
+
+    function updateScoreHUD() {
+      document.getElementById("hudUserScore").innerText = userScore;
+      document.getElementById("hudCpuScore").innerText = cpuScore;
+    }
+
+    // 8. GRAPHICS RENDERING (CANVAS BASKETBALL COURT & CHARACTERS)
+    function renderCourt() {
+      ctx.clearRect(0, 0, courtWidth, courtHeight);
+      updateHoopPosition();
+
+      // A. Hardwood Floor Texture & Slats
+      const gradient = ctx.createLinearGradient(0, 0, 0, courtHeight);
+      gradient.addColorStop(0, "#ca7b2d");
+      gradient.addColorStop(0.5, "#db8e3f");
+      gradient.addColorStop(1, "#be7023");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, courtWidth, courtHeight);
+
+      // Wood plank seams
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
+      ctx.lineWidth = 1;
+      for (let y = 0; y < courtHeight; y += 14) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(courtWidth, y);
+        ctx.stroke();
+      }
+
+      // Hardwood glossy reflection highlight
+      const gloss = ctx.createLinearGradient(0, 0, courtWidth, 0);
+      gloss.addColorStop(0, "rgba(255, 255, 255, 0.04)");
+      gloss.addColorStop(0.5, "rgba(255, 255, 255, 0.12)");
+      gloss.addColorStop(1, "rgba(255, 255, 255, 0.02)");
+      ctx.fillStyle = gloss;
+      ctx.fillRect(0, 0, courtWidth, courtHeight);
+
+      // B. Court Boundaries & Markings
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(30, 40, courtWidth - 60, courtHeight - 80);
+
+      // Center Circle & Half-court line
+      ctx.beginPath();
+      ctx.arc(60, courtHeight / 2, 90, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // The Paint / Key (Right side hoop)
+      ctx.fillStyle = "rgba(180, 20, 40, 0.55)";
+      ctx.fillRect(courtWidth - 250, courtHeight / 2 - 80, 220, 160);
+      ctx.strokeRect(courtWidth - 250, courtHeight / 2 - 80, 220, 160);
+
+      // Free throw circle
+      ctx.beginPath();
+      ctx.arc(courtWidth - 250, courtHeight / 2, 70, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // 3-Point Arc
+      ctx.beginPath();
+      ctx.arc(hoop.x, hoop.y, 300, Math.PI * 0.55, Math.PI * 1.45, false);
+      ctx.stroke();
+
+      // Straight lines connecting 3PT arc to baseline
+      ctx.beginPath();
+      ctx.moveTo(courtWidth - 30, courtHeight / 2 - 280);
+      ctx.lineTo(courtWidth - 110, courtHeight / 2 - 280);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(courtWidth - 30, courtHeight / 2 + 280);
+      ctx.lineTo(courtWidth - 110, courtHeight / 2 + 280);
+      ctx.stroke();
+
+      // C. Basketball Hoop Structure
+      renderHoop();
+
+      // D. Shadows under players & ball
+      renderShadow(player.x, player.y, 22, player.z);
+      renderShadow(cpu.x, cpu.y, 22, cpu.z);
+      renderShadow(ball.x, ball.y, 10, ball.z);
+
+      // E. Render Characters (Realistic Athlectic Sprites with Team Colors & Numbers)
+      renderAthlete(cpu, cpuLegend, false);
+      renderAthlete(player, userLegend, true);
+
+      // F. Render Basketball in 3D Space
+      renderBasketball();
+
+      // G. Render Particles
+      renderParticles();
+    }
+
+    function renderHoop() {
+      const shakeOffset = (Math.random() - 0.5) * hoop.shake;
+
+      // Backboard Glass
+      ctx.save();
+      ctx.translate(hoop.x + 20 + shakeOffset, hoop.y);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 4;
+      ctx.fillRect(-hoop.backboardWidth, -hoop.backboardHeight / 2, hoop.backboardWidth, hoop.backboardHeight);
+      ctx.strokeRect(-hoop.backboardWidth, -hoop.backboardHeight / 2, hoop.backboardWidth, hoop.backboardHeight);
+
+      // Inner target square
+      ctx.strokeStyle = "#ff3300";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-hoop.backboardWidth, -20, hoop.backboardWidth, 40);
+      ctx.restore();
+
+      // Rim (Orange iron ring)
+      ctx.save();
+      ctx.translate(hoop.x + shakeOffset, hoop.y);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, hoop.rimRadius, hoop.rimRadius * 0.5, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = "#ff5500";
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      // White Net Meshes
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = -hoop.rimRadius; i <= hoop.rimRadius; i += 6) {
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i * 0.4, 30);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function renderShadow(x, y, radius, z) {
+      const scale = Math.max(0.2, 1 - (z / 180));
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(x, y, radius * scale, (radius * 0.5) * scale, 0, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0, 0, 0, ${0.45 * scale})`;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function renderAthlete(p, legend, isUser) {
+      const renderY = p.y - p.z;
+      ctx.save();
+      ctx.translate(p.x, renderY);
+
+      // Facing orientation
+      if (!p.facingRight) {
+        ctx.scale(-1, 1);
+      }
+
+      // Athletic proportions & anatomy
+      const primaryColor = legend.color1 || "#CE1141";
+      const secondaryColor = legend.color2 || "#000000";
+
+      // Shoes / Sneakers
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-12, -2, 11, 6);
+      ctx.fillRect(2, -2, 11, 6);
+      ctx.fillStyle = primaryColor;
+      ctx.fillRect(-12, 1, 11, 3);
+      ctx.fillRect(2, 1, 11, 3);
+
+      // Legs / Muscle Shading
+      ctx.fillStyle = "#8a5836"; // Skin tone
+      ctx.fillRect(-10, -22, 7, 20);
+      ctx.fillRect(4, -22, 7, 20);
+
+      // Jersey Shorts
+      ctx.fillStyle = primaryColor;
+      ctx.fillRect(-12, -34, 25, 14);
+      ctx.fillStyle = secondaryColor;
+      ctx.fillRect(-12, -22, 25, 3);
+
+      // Torso / Team Jersey
+      ctx.fillStyle = primaryColor;
+      ctx.beginPath();
+      ctx.roundRect(-14, -60, 29, 28, 6);
+      ctx.fill();
+
+      // Jersey Number & Striping
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 13px 'Teko', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(legend.number, 1, -40);
+
+      // Head & Realistic Features (Beard, Headband, Skin)
+      ctx.fillStyle = "#8a5836";
+      ctx.beginPath();
+      ctx.arc(0, -70, 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Headband / Goggles / Hair details for specific legends
+      if (legend.id === "jordan") {
+        // Sleek bald champion shine
+        ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+        ctx.beginPath();
+        ctx.arc(-2, -73, 4, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (legend.id === "iverson" || legend.id === "lebron") {
+        // Iconic Headband
+        ctx.fillStyle = secondaryColor || "#ffffff";
+        ctx.fillRect(-10, -76, 20, 4);
+      } else if (legend.id === "kareem") {
+        // Rec-Specs Goggles
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-7, -72, 14, 5);
+      } else if (legend.id === "rodman") {
+        // Bright dyed hair
+        ctx.fillStyle = "#00ff88";
+        ctx.beginPath();
+        ctx.arc(0, -75, 11, Math.PI, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Arms (reaching up if jumping/shooting/blocking)
+      ctx.fillStyle = "#8a5836";
+      if (p.isShooting || p.isBlocking || p.isDunking) {
+        // Raised arms
+        ctx.fillRect(8, -78, 6, 26);
+        ctx.fillRect(-14, -78, 6, 26);
+      } else {
+        // Guard / Dribble athletic stance
+        ctx.fillRect(11, -55, 6, 22);
+        ctx.fillRect(-17, -55, 6, 22);
+      }
+
+      // Indicator halo above user player
+      if (isUser) {
+        ctx.fillStyle = "var(--accent-cyan)";
+        ctx.beginPath();
+        ctx.moveTo(0, -88);
+        ctx.lineTo(-6, -96);
+        ctx.lineTo(6, -96);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function renderBasketball() {
+      const renderY = ball.y - ball.z;
+      ctx.save();
+      ctx.translate(ball.x, renderY);
+      ctx.rotate(ball.rot);
+
+      // Ball glow
+      const ballGrad = ctx.createRadialGradient(-3, -3, 1, 0, 0, ball.radius);
+      ballGrad.addColorStop(0, "#ff8833");
+      ballGrad.addColorStop(0.7, "#e65100");
+      ballGrad.addColorStop(1, "#8c2d00");
+
+      ctx.beginPath();
+      ctx.arc(0, 0, ball.radius, 0, Math.PI * 2);
+      ctx.fillStyle = ballGrad;
+      ctx.fill();
+
+      // Basketball black ribs
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, ball.radius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(-ball.radius, 0);
+      ctx.lineTo(ball.radius, 0);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, -ball.radius);
+      ctx.lineTo(0, ball.radius);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function renderParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.03;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        if (p.alpha <= 0) particles.splice(i, 1);
+      }
+    }
+
+    function gameLoop() {
+      updateGame();
+      renderCourt();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 9. MATCH CONTROL & CLOCK
+    function toggleMatchState() {
+      if (matchRunning) {
+        pauseMatch();
+      } else {
+        startMatch();
+      }
+    }
+
+    function startMatch() {
+      sound.init();
+      matchRunning = true;
+      document.getElementById("btnMatchToggle").innerHTML = "<span>⏸️</span> Jeda Pertandingan";
+      document.getElementById("matchModalOverlay").classList.remove("active");
+
+      if (!clockInterval) {
+        clockInterval = setInterval(() => {
+          if (!matchRunning) return;
+          matchSeconds--;
+          shotClock--;
+
+          if (shotClock <= 0) {
+            sound.playBuzzer();
+            triggerSplashText("24-SEC SHOT CLOCK TURNOVER!", "#ff3366");
+            const nextPossession = (ball.holder === 'user') ? 'cpu' : 'user';
+            resetPossession(nextPossession);
+          }
+
+          if (matchSeconds <= 0) {
+            endMatch();
+          }
+
+          updateClockDisplay();
+        }, 1000);
+      }
+    }
+
+    function pauseMatch() {
+      matchRunning = false;
+      document.getElementById("btnMatchToggle").innerHTML = "<span>▶️</span> Lanjutkan Match";
+    }
+
+    function updateClockDisplay() {
+      const mins = Math.floor(matchSeconds / 60);
+      const secs = matchSeconds % 60;
+      document.getElementById("hudMatchTime").innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      document.getElementById("hudShotClock").innerText = shotClock;
+    }
+
+    function endMatch() {
+      matchRunning = false;
+      clearInterval(clockInterval);
+      clockInterval = null;
+      sound.playBuzzer();
+
+      const won = userScore >= cpuScore;
+      if (won) {
+        gameState.stats.totalWins++;
+        gameState.stats.winStreak++;
+      } else {
+        gameState.stats.totalLosses++;
+        gameState.stats.winStreak = 0;
+      }
+
+      // Calculate cash rewards
+      const basePrize = won ? 3500 : 1000;
+      const dunkBonus = matchMatchDunks * 250;
+      const blockBonus = matchMatchBlocks * 200;
+      const totalPrize = basePrize + dunkBonus + blockBonus;
+      gameState.cash += totalPrize;
+
+      // Check Jordan rivalry win for Larry O'Brien trophy
+      if (won && cpuLegend.id === "jordan" && (userScore - cpuScore >= 5)) {
+        if (!gameState.trophies.includes("larry_obrien")) {
+          gameState.trophies.push("larry_obrien");
+          gameState.cash += 10000;
+          showToast("🏆 LARRY O'BRIEN CHAMPIONSHIP TROPHY TERBUKA! +$10,000", "👑");
+        }
+      }
+
+      checkTrophies();
+      saveGame();
+
+      // Show GameOver Modal
+      const modal = document.getElementById("matchModalOverlay");
+      const banner = document.getElementById("modalBannerText");
+      const subtitle = document.getElementById("modalSubtitleText");
+
+      if (won) {
+        banner.innerText = "CHAMPIONSHIP VICTORY!";
+        banner.className = "modal-banner win";
+        subtitle.innerText = `Luar biasa! ${userLegend.name} berhasil mengalahkan ${cpuLegend.name} dan memenangkan kejuaraan!`;
+        sound.playCrowdCheer();
+      } else {
+        banner.innerText = "MATCH DEFEAT";
+        banner.className = "modal-banner lose";
+        subtitle.innerText = `${cpuLegend.name} tampil tangguh kali ini. Terus latih tembakan dan perkuat skuad Anda!`;
+      }
+
+      document.getElementById("modalFinalScore").innerText = `${userScore} - ${cpuScore}`;
+      document.getElementById("modalPrizeMoney").innerText = `+$${totalPrize.toLocaleString()}`;
+      document.getElementById("modalTotalDunks").innerText = matchMatchDunks;
+      document.getElementById("modalTotalBlocks").innerText = matchMatchBlocks;
+
+      modal.classList.add("active");
+    }
+
+    function restartMatch() {
+      userScore = 0;
+      cpuScore = 0;
+      matchSeconds = 120;
+      shotClock = 24;
+      matchMatchDunks = 0;
+      matchMatchBlocks = 0;
+      updateScoreHUD();
+      updateClockDisplay();
+
+      // Reset positions
+      player.x = 250;
+      player.y = courtHeight / 2;
+      player.z = 0;
+      cpu.x = 650;
+      cpu.y = courtHeight / 2;
+      cpu.z = 0;
+      ball.holder = 'user';
+      ball.isShot = false;
+      ball.isDunk = false;
+
+      startMatch();
+    }
+
+    function changeOpponent() {
+      // Pick random legend other than active player
+      const candidates = ALL_TIME_LEGENDS.filter(l => l.id !== gameState.activePlayerId);
+      const nextOpponent = candidates[Math.floor(Math.random() * candidates.length)];
+      setupMatchCompetitors(userLegend, nextOpponent);
+      showToast(`Lawan baru: ${nextOpponent.name} (${nextOpponent.team})`, "🔄");
+    }
+
+    function setupMatchCompetitors(user, cpuP) {
+      userLegend = user;
+      cpuLegend = cpuP;
+
+      // Update HUD Avatars
+      document.getElementById("hudUserName").innerText = user.name.split(' ').pop().toUpperCase();
+      const uAv = document.getElementById("hudUserAvatar");
+      uAv.onerror = () => { uAv.src = getPlayerSVGFallback(user); };
+      uAv.src = user.photo;
+
+      document.getElementById("hudCpuName").innerText = cpuP.name.split(' ').pop().toUpperCase();
+      const cAv = document.getElementById("hudCpuAvatar");
+      cAv.onerror = () => { cAv.src = getPlayerSVGFallback(cpuP); };
+      cAv.src = cpuP.photo;
+    }
+
+    // 10. UI TAB NAVIGATION & RENDERING
+    function switchTab(tabId) {
+      sound.init();
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+
+      const target = document.getElementById(`tab-${tabId}`);
+      const btn = document.getElementById(`btn-tab-${tabId}`);
+      if (target) target.classList.add("active");
+      if (btn) btn.classList.add("active");
+
+      if (tabId === 'court') {
+        resizeCanvas();
+      } else if (tabId === 'roster') {
+        renderRoster();
+      } else if (tabId === 'market') {
+        renderMarket();
+      } else if (tabId === 'trophy') {
+        renderTrophies();
+      }
+    }
+
+    function updateHeaderUI() {
+      document.getElementById("headerWalletText").innerText = `$${gameState.cash.toLocaleString()}`;
+      document.getElementById("rosterCountBadge").innerText = gameState.roster.length;
+      document.getElementById("trophyCountBadge").innerText = `${gameState.trophies.length}/7`;
+
+      const activeLegend = ALL_TIME_LEGENDS.find(l => l.id === gameState.activePlayerId) || ALL_TIME_LEGENDS[0];
+      document.getElementById("headerActiveName").innerText = activeLegend.name;
+      document.getElementById("headerActiveOVR").innerText = `OVR ${activeLegend.ovr} • ${activeLegend.pos}`;
+      const hAv = document.getElementById("headerActiveAvatar");
+      hAv.onerror = () => { hAv.src = getPlayerSVGFallback(activeLegend); };
+      hAv.src = activeLegend.photo;
+    }
+
+    // Render My Roster Cards
+    function renderRoster() {
+      const container = document.getElementById("rosterGridContainer");
+      container.innerHTML = "";
+
+      gameState.roster.forEach(legendId => {
+        const p = ALL_TIME_LEGENDS.find(l => l.id === legendId);
+        if (!p) return;
+
+        const isActive = (p.id === gameState.activePlayerId);
+        const card = document.createElement("div");
+        card.className = `player-card ${isActive ? 'active-selected' : ''}`;
+
+        const sellRefund = Math.floor(p.price * 0.75);
+
+        card.innerHTML = `
+          <div class="card-top-banner">
+            <span class="card-team-bg">${p.number}</span>
+            <div class="card-badge-ovr">
+              <span class="badge-ovr-num">${p.ovr}</span>
+              <span class="badge-pos">${p.pos}</span>
+            </div>
+            <img src="${p.photo}" class="card-player-photo" alt="${p.name}" onerror="handleImageError(this, '${p.id}')">
+          </div>
+
+          <div class="card-content">
+            <div class="card-header-info">
+              <span class="card-team-name">${p.team} #${p.number}</span>
+              <h3 class="card-player-name">${p.name}</h3>
+              <div class="card-meta-line">Tinggi: ${p.height} • ${p.nickname}</div>
+            </div>
+
+            <div class="card-stats-bars">
+              ${renderStatBar("SPEED", p.stats.spd)}
+              ${renderStatBar("DUNK", p.stats.dunk)}
+              ${renderStatBar("3-POINT", p.stats.three)}
+              ${renderStatBar("MIDRANGE", p.stats.mid)}
+              ${renderStatBar("BLOCK", p.stats.blk)}
+              ${renderStatBar("DEFENSE", p.stats.def)}
+            </div>
+
+            <div class="card-footer-action">
+              <div class="card-price-tag">
+                <span class="price-label">Nilai Jual (75%)</span>
+                <span class="price-value">$${sellRefund.toLocaleString()}</span>
+              </div>
+              <div style="display:flex; gap:8px;">
+                ${isActive ? 
+                  `<button class="btn-card-action btn-selected">✓ Pemain Aktif</button>` :
+                  `<button class="btn-card-action btn-select" onclick="setActivePlayer('${p.id}')">Pilih Main</button>
+                   ${gameState.roster.length > 1 ? `<button class="btn-card-action btn-sell" onclick="sellPlayer('${p.id}')">Jual</button>` : ''}
+                  `
+                }
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Render Transfer Market
+    let marketFilterPos = "ALL";
+    function setMarketFilter(pos, btn) {
+      marketFilterPos = pos;
+      document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      renderMarket();
+    }
+
+    function renderMarket() {
+      const container = document.getElementById("marketGridContainer");
+      container.innerHTML = "";
+
+      const query = document.getElementById("marketSearchInput").value.toLowerCase();
+      const sort = document.getElementById("marketSortSelect").value;
+
+      let list = ALL_TIME_LEGENDS.filter(p => {
+        const matchesQuery = p.name.toLowerCase().includes(query) || p.team.toLowerCase().includes(query);
+        const matchesPos = (marketFilterPos === "ALL" || p.pos === marketFilterPos);
+        return matchesQuery && matchesPos;
+      });
+
+      // Sort
+      if (sort === "ovr-desc") list.sort((a, b) => b.ovr - a.ovr);
+      if (sort === "price-asc") list.sort((a, b) => a.price - b.price);
+      if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
+      if (sort === "dunk-desc") list.sort((a, b) => b.stats.dunk - a.stats.dunk);
+      if (sort === "3pt-desc") list.sort((a, b) => b.stats.three - a.stats.three);
+
+      list.forEach(p => {
+        const owned = gameState.roster.includes(p.id);
+        const canAfford = gameState.cash >= p.price;
+
+        const card = document.createElement("div");
+        card.className = "player-card";
+
+        card.innerHTML = `
+          <div class="card-top-banner">
+            <span class="card-team-bg">${p.number}</span>
+            <div class="card-badge-ovr">
+              <span class="badge-ovr-num">${p.ovr}</span>
+              <span class="badge-pos">${p.pos}</span>
+            </div>
+            <img src="${p.photo}" class="card-player-photo" alt="${p.name}" onerror="handleImageError(this, '${p.id}')">
+          </div>
+
+          <div class="card-content">
+            <div class="card-header-info">
+              <span class="card-team-name">${p.team} #${p.number}</span>
+              <h3 class="card-player-name">${p.name}</h3>
+              <div class="card-meta-line">${p.nickname} • ${p.height}</div>
+            </div>
+
+            <div class="card-stats-bars">
+              ${renderStatBar("SPEED", p.stats.spd)}
+              ${renderStatBar("DUNK", p.stats.dunk)}
+              ${renderStatBar("3-POINT", p.stats.three)}
+              ${renderStatBar("MIDRANGE", p.stats.mid)}
+              ${renderStatBar("BLOCK", p.stats.blk)}
+              ${renderStatBar("REBOUND", p.stats.reb)}
+            </div>
+
+            <div class="card-footer-action">
+              <div class="card-price-tag">
+                <span class="price-label">Biaya Transfer</span>
+                <span class="price-value">$${p.price.toLocaleString()}</span>
+              </div>
+              <div>
+                ${owned ? 
+                  `<span style="font-size:12px; font-weight:700; color:var(--accent-green);">✓ SUDAH DIMILIKI</span>` :
+                  `<button class="btn-card-action btn-buy" ${canAfford ? '' : 'disabled style="opacity:0.5; cursor:not-allowed;"'} onclick="buyPlayer('${p.id}')">
+                    🛒 Beli Kontrak
+                   </button>`
+                }
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderStatBar(label, val) {
+      return `
+        <div class="stat-row">
+          <div class="stat-label-wrap">
+            <span class="stat-name">${label}</span>
+            <span class="stat-val">${val}</span>
+          </div>
+          <div class="stat-progress-bg">
+            <div class="stat-progress-fill" style="width: ${val}%;"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 11. ECONOMY: BUY & SELL LOGIC
+    function buyPlayer(legendId) {
+      const p = ALL_TIME_LEGENDS.find(l => l.id === legendId);
+      if (!p) return;
+
+      if (gameState.roster.includes(p.id)) {
+        showToast("Pemain ini sudah ada di dalam skuad Anda!");
+        return;
+      }
+
+      if (gameState.cash < p.price) {
+        showToast("Uang tunai tidak cukup! Menangkan lebih banyak match untuk mengumpulkan uang.", "⚠️");
+        return;
+      }
+
+      gameState.cash -= p.price;
+      gameState.roster.push(p.id);
+      saveGame();
+
+      sound.playCrowdCheer();
+      showToast(`🎉 Selamat! Anda sukses merekrut ${p.name} seharga $${p.price.toLocaleString()}!`, "✍️");
+      checkTrophies();
+      renderMarket();
+    }
+
+    function sellPlayer(legendId) {
+      if (gameState.roster.length <= 1) {
+        showToast("Anda harus memiliki minimal 1 pemain di skuad!", "⚠️");
+        return;
+      }
+
+      const p = ALL_TIME_LEGENDS.find(l => l.id === legendId);
+      if (!p) return;
+
+      const refund = Math.floor(p.price * 0.75);
+      if (confirm(`Apakah Anda yakin ingin menjual ${p.name} seharga $${refund.toLocaleString()}?`)) {
+        gameState.cash += refund;
+        gameState.roster = gameState.roster.filter(id => id !== p.id);
+
+        if (gameState.activePlayerId === p.id) {
+          gameState.activePlayerId = gameState.roster[0];
+        }
+
+        saveGame();
+        showToast(`Penjualan berhasil: +$${refund.toLocaleString()} masuk ke kas tim Anda.`, "💵");
+        renderRoster();
+      }
+    }
+
+    function setActivePlayer(legendId) {
+      gameState.activePlayerId = legendId;
+      saveGame();
+      const p = ALL_TIME_LEGENDS.find(l => l.id === legendId);
+      setupMatchCompetitors(p, cpuLegend || ALL_TIME_LEGENDS[1]);
+      showToast(`${p.name} kini menjadi Pemain Utama Anda di lapangan!`, "⭐");
+      renderRoster();
+    }
+
+    // 12. TROPHY ROOM RENDERING
+    function renderTrophies() {
+      const container = document.getElementById("trophiesContainer");
+      container.innerHTML = "";
+
+      document.getElementById("trophyTotalUnlockedText").innerText = `${gameState.trophies.length} / ${TROPHY_DEFS.length} TERBUKA`;
+
+      TROPHY_DEFS.forEach(t => {
+        const isUnlocked = gameState.trophies.includes(t.id);
+        const card = document.createElement("div");
+        card.className = `trophy-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+
+        card.innerHTML = `
+          <div class="trophy-icon-3d">${t.icon}</div>
+          <h3 class="trophy-name">${t.title}</h3>
+          <p class="trophy-desc">${t.desc}</p>
+          <div style="font-size:12px; color:var(--accent-gold); font-weight:700; margin-bottom:12px;">
+            Hadiah Uang: +$${t.reward.toLocaleString()}
+          </div>
+          <div class="trophy-status-pill ${isUnlocked ? 'unlocked' : 'locked'}">
+            ${isUnlocked ? '✓ Trofi Berhasil Diraih' : '🔒 Terkunci'}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 13. INITIALIZATION
+    function initGameApp() {
+      loadSavedGame();
+      setupTouchControls();
+
+      // Set active user player and rival
+      const activeP = ALL_TIME_LEGENDS.find(l => l.id === gameState.activePlayerId) || ALL_TIME_LEGENDS[0];
+      const rivalP = ALL_TIME_LEGENDS.find(l => l.id === "kobe") || ALL_TIME_LEGENDS[2];
+      setupMatchCompetitors(activeP, rivalP);
+
+      updateHeaderUI();
+      renderRoster();
+      renderMarket();
+      renderTrophies();
+
+      resizeCanvas();
+      ball.holder = 'user';
+
+      // Start match and rendering loop
+      startMatch();
+      requestAnimationFrame(gameLoop);
+    }
+
+    window.addEventListener("DOMContentLoaded", initGameApp);
+  </script>
+</body>
+</html>
