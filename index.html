@@ -8,6 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  
+  <!-- Firebase SDKs (Compat for direct browser execution) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script>
   <style>
     :root {
       --bg-dark: #0a0d14;
@@ -166,6 +172,57 @@
       font-weight: 700;
       color: #ffde59;
       letter-spacing: 0.5px;
+    }
+
+    .firebase-sync-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 184, 0, 0.35);
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .firebase-sync-badge:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent-gold);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--glow-gold);
+    }
+
+    .firebase-sync-badge.synced {
+      border-color: rgba(0, 255, 136, 0.5);
+    }
+
+    .firebase-sync-badge .sync-icon {
+      font-size: 16px;
+    }
+
+    .firebase-sync-badge .sync-details {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .firebase-sync-badge .sync-title {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--accent-gold);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .firebase-sync-badge .sync-uid {
+      font-size: 10px;
+      color: var(--text-muted);
+      max-width: 90px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .active-legend-badge {
@@ -1353,8 +1410,17 @@
       </button>
     </nav>
 
-    <!-- Header Stats & Wallet -->
+    <!-- Header Stats, Cloud Sync & Wallet -->
     <div class="header-stats">
+      <!-- Firebase Cloud Sync Status Badge -->
+      <div class="firebase-sync-badge" id="firebaseSyncBadge" onclick="manualSyncFirebase()" title="Status Sinkronisasi Firebase Cloud (Klik untuk sinkronisasi manual)">
+        <span class="sync-icon" id="firebaseSyncIcon">☁️</span>
+        <div class="sync-details">
+          <span class="sync-title" id="firebaseSyncStatus">Firebase Sync</span>
+          <span class="sync-uid" id="firebaseUserDisplay">Menghubungkan...</span>
+        </div>
+      </div>
+
       <div class="wallet-badge" title="Saldo Kas Tim Anda">
         <span class="wallet-icon">💵</span>
         <span class="wallet-amount" id="headerWalletText">$10,000</span>
@@ -2359,6 +2425,187 @@
 
     let gameState = { ...defaultState };
 
+    // ==========================================
+    // FIREBASE CLOUD SETUP & CONFIGURATION
+    // ==========================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyB--iECEd0qz8wrIg_VtCLAGCd81R7Vhx4",
+      authDomain: "nba-legends-goat-edition.firebaseapp.com",
+      projectId: "nba-legends-goat-edition",
+      storageBucket: "nba-legends-goat-edition.firebasestorage.app",
+      messagingSenderId: "118161744370",
+      appId: "1:118161744370:web:1652a284bbc86db1f2cb6b"
+    };
+
+    let firebaseApp = null;
+    let firebaseAuth = null;
+    let firebaseDb = null;
+    let currentFirebaseUser = null;
+    let firebaseSyncActive = false;
+    let syncDebounceTimer = null;
+
+    function initFirebase() {
+      try {
+        if (typeof firebase !== 'undefined') {
+          if (!firebase.apps || !firebase.apps.length) {
+            firebaseApp = firebase.initializeApp(firebaseConfig);
+          } else {
+            firebaseApp = firebase.app();
+          }
+
+          firebaseAuth = firebase.auth();
+          firebaseDb = firebase.firestore();
+
+          // Initialize Analytics if supported
+          try {
+            if (firebase.analytics && typeof firebase.analytics.isSupported === 'function') {
+              firebase.analytics.isSupported().then(supported => {
+                if (supported) firebase.analytics();
+              });
+            }
+          } catch(e) {}
+
+          console.log("🔥 Firebase initialized successfully:", firebaseApp.name);
+          updateSyncBadge("Menghubungkan...", "⏳");
+
+          // Auth State Listener
+          firebaseAuth.onAuthStateChanged(async (user) => {
+            if (user) {
+              currentFirebaseUser = user;
+              firebaseSyncActive = true;
+              console.log("🔥 Firebase User authenticated:", user.uid);
+              updateSyncBadge("Online", "☁️", user.uid.substring(0, 8) + "...");
+              await loadCloudSave(user.uid);
+            } else {
+              // Sign in anonymously
+              try {
+                await firebaseAuth.signInAnonymously();
+              } catch(authErr) {
+                console.warn("Firebase anonymous sign-in warning:", authErr);
+                updateSyncBadge("Lokal", "💾", "Offline");
+              }
+            }
+          });
+        } else {
+          console.warn("Firebase SDK not loaded, continuing with LocalStorage.");
+          updateSyncBadge("Lokal", "💾", "Offline");
+        }
+      } catch (err) {
+        console.error("Firebase init error:", err);
+        updateSyncBadge("Lokal", "💾", "Offline");
+      }
+    }
+
+    function updateSyncBadge(status, icon = "☁️", subtitle = null) {
+      const statusEl = document.getElementById("firebaseSyncStatus");
+      const iconEl = document.getElementById("firebaseSyncIcon");
+      const uidEl = document.getElementById("firebaseUserDisplay");
+      const badge = document.getElementById("firebaseSyncBadge");
+      if (statusEl) statusEl.innerText = status;
+      if (iconEl) iconEl.innerText = icon;
+      if (uidEl && subtitle) uidEl.innerText = subtitle;
+      if (badge) {
+        if (status === "Online" || status === "Tersinkron") {
+          badge.classList.add("synced");
+        } else {
+          badge.classList.remove("synced");
+        }
+      }
+    }
+
+    // Load Game State from Firestore Cloud
+    async function loadCloudSave(uid) {
+      if (!firebaseDb || !uid) return;
+      try {
+        const docRef = firebaseDb.collection("players").doc(uid);
+        const docSnap = await docRef.get();
+        if (docSnap.exists) {
+          const cloudData = docSnap.data();
+          console.log("☁️ Found Cloud Save on Firebase Firestore:", cloudData);
+
+          // Restore progress from cloud if cloud data is valid
+          if (cloudData.cash !== undefined) {
+            gameState.cash = cloudData.cash;
+            gameState.roster = Array.isArray(cloudData.roster) ? cloudData.roster : gameState.roster;
+            gameState.activePlayerId = cloudData.activePlayerId || gameState.activePlayerId;
+            gameState.trophies = Array.isArray(cloudData.trophies) ? cloudData.trophies : gameState.trophies;
+            if (cloudData.stats) {
+              gameState.stats = { ...gameState.stats, ...cloudData.stats };
+            }
+
+            // Save to localStorage as well
+            localStorage.setItem("nba_legends_save_v1", JSON.stringify(gameState));
+
+            // Refresh UI
+            updateHeaderUI();
+            renderRoster();
+            renderTrophies();
+            renderMarket();
+            showToast("☁️ Data Game Berhasil Dimuat dari Firebase Cloud!", "🔥");
+          }
+        } else {
+          // New player in cloud: write initial save
+          console.log("☁️ First time cloud save, writing initial data to Firestore...");
+          await saveCloudSave(uid);
+        }
+      } catch (err) {
+        console.warn("Could not load from Firestore, using LocalStorage:", err);
+      }
+    }
+
+    // Save Game State to Firestore Cloud
+    async function saveCloudSave(uid) {
+      if (!firebaseDb || !uid) return;
+      try {
+        const docRef = firebaseDb.collection("players").doc(uid);
+        await docRef.set({
+          cash: gameState.cash,
+          roster: gameState.roster,
+          activePlayerId: gameState.activePlayerId,
+          trophies: gameState.trophies,
+          stats: gameState.stats,
+          lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        // Update live Leaderboard in Firestore
+        const leaderRef = firebaseDb.collection("leaderboard").doc(uid);
+        const activeName = (userLegend && userLegend.name) ? userLegend.name : "Player";
+        await leaderRef.set({
+          uid: uid,
+          playerName: activeName,
+          wins: gameState.stats.totalWins || 0,
+          dunks: gameState.stats.totalDunks || 0,
+          trophiesCount: gameState.trophies.length || 0,
+          cash: gameState.cash || 0,
+          lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        updateSyncBadge("Tersinkron", "☁️", uid.substring(0, 8) + "...");
+      } catch (err) {
+        console.warn("Could not save to Firestore:", err);
+      }
+    }
+
+    function syncGameToFirebase() {
+      if (!firebaseSyncActive || !currentFirebaseUser) return;
+      updateSyncBadge("Menyimpan...", "⏳", currentFirebaseUser.uid.substring(0, 8) + "...");
+      if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
+      syncDebounceTimer = setTimeout(() => {
+        saveCloudSave(currentFirebaseUser.uid);
+      }, 700);
+    }
+
+    async function manualSyncFirebase() {
+      if (!firebaseSyncActive || !currentFirebaseUser) {
+        showToast("Menghubungkan ke Firebase Cloud...", "☁️");
+        initFirebase();
+        return;
+      }
+      showToast("Menyinkronkan data ke Firebase Cloud...", "⏳");
+      await saveCloudSave(currentFirebaseUser.uid);
+      showToast("Data Berhasil Disinkronkan ke Firebase!", "✅");
+    }
+
     function loadSavedGame() {
       try {
         const saved = localStorage.getItem("nba_legends_save_v1");
@@ -2375,6 +2622,7 @@
         localStorage.setItem("nba_legends_save_v1", JSON.stringify(gameState));
       } catch(e) {}
       updateHeaderUI();
+      syncGameToFirebase();
     }
 
     function showToast(msg, icon = "🏀") {
@@ -4188,6 +4436,7 @@
     // 13. INITIALIZATION
     function initGameApp() {
       loadSavedGame();
+      initFirebase();
       setupTouchControls();
 
       // Set active user player and rival

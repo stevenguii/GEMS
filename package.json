@@ -1,0 +1,29 @@
+{
+  "name": "gems",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "serve . -p 3000",
+    "dev": "serve . -p 3000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevenguii/GEMS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/stevenguii/GEMS/issues"
+  },
+  "homepage": "https://github.com/stevenguii/GEMS#readme",
+  "dependencies": {
+    "firebase": "^12.19.0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.6"
+  }
+}
