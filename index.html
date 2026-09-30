@@ -242,7 +242,7 @@
        COURT TAB / MATCH INTERFACE
        ========================================= */
     #tab-court {
-      padding: 10px 15px 25px;
+      padding: 8px 15px 12px;
       max-width: 1400px;
     }
 
@@ -250,7 +250,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       gap: 15px;
       flex-wrap: wrap;
     }
@@ -389,7 +389,7 @@
     .canvas-wrapper {
       position: relative;
       width: 100%;
-      height: 580px;
+      height: clamp(420px, calc(100vh - 165px), 620px);
       background: #000;
       border-radius: 20px;
       overflow: hidden;
@@ -543,59 +543,115 @@
       line-height: 1;
     }
 
-    /* Virtual Mobile / Desktop On-Screen Controls */
+    /* On-Canvas Floating HUD Controls (No Scrolling Needed) */
     .touch-controls {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-top: 15px;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.02);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      align-items: flex-end;
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      right: 14px;
+      margin-top: 0;
+      padding: 0;
+      background: transparent;
+      border: none;
+      pointer-events: none;
+      z-index: 12;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .virtual-dpad-container,
+    .virtual-actions-container {
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .virtual-actions-container {
+      align-items: flex-end;
+    }
+
+    .hud-sub-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.65);
+      text-transform: uppercase;
+      background: rgba(10, 13, 20, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      width: fit-content;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
 
     .virtual-dpad {
       display: grid;
-      grid-template-columns: repeat(3, 50px);
-      grid-template-rows: repeat(3, 50px);
-      gap: 6px;
+      grid-template-columns: repeat(3, 44px);
+      grid-template-rows: repeat(3, 44px);
+      gap: 5px;
+      background: rgba(13, 17, 27, 0.75);
+      backdrop-filter: blur(12px);
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
     }
 
     .dpad-btn {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
+      border-radius: 10px;
       color: #fff;
-      font-size: 18px;
+      font-size: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       user-select: none;
-      transition: background 0.1s, transform 0.1s;
+      transition: all 0.15s;
+    }
+
+    .dpad-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
 
     .dpad-btn:active, .dpad-btn.pressed {
       background: var(--accent-orange);
+      box-shadow: 0 0 12px var(--glow-orange);
       transform: scale(0.92);
+    }
+
+    .dpad-btn.center-dot {
+      background: rgba(255, 255, 255, 0.02);
+      border: none;
+      color: rgba(255, 255, 255, 0.25);
+      cursor: default;
     }
 
     .virtual-actions {
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
+      gap: 10px;
+      align-items: center;
+      background: rgba(13, 17, 27, 0.75);
+      backdrop-filter: blur(12px);
+      padding: 6px 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
     }
 
     .v-action-btn {
-      width: 76px;
-      height: 76px;
-      border-radius: 50%;
-      border: none;
+      width: 62px;
+      height: 62px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       font-family: 'Outfit', sans-serif;
       font-weight: 800;
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 0.5px;
       color: #fff;
       cursor: pointer;
@@ -605,49 +661,90 @@
       justify-content: center;
       gap: 2px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      transition: transform 0.1s, filter 0.1s;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
       text-transform: uppercase;
+      position: relative;
     }
 
-    .v-action-btn:active, .v-action-btn.pressed {
-      transform: scale(0.9);
+    .v-action-btn .btn-icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .v-action-btn .btn-name {
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .v-action-btn:hover {
+      transform: translateY(-2px);
       filter: brightness(1.2);
     }
 
+    .v-action-btn:active, .v-action-btn.pressed {
+      transform: scale(0.92);
+      filter: brightness(1.35);
+    }
+
     .v-action-btn.shoot {
+      background: linear-gradient(135deg, rgba(0, 198, 255, 0.35), rgba(0, 114, 255, 0.6));
+      border-color: #00c6ff;
+    }
+    .v-action-btn.shoot.pressed {
       background: linear-gradient(135deg, #00c6ff, #0072ff);
-      box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 198, 255, 0.7);
     }
 
     .v-action-btn.dunk {
+      background: linear-gradient(135deg, rgba(255, 65, 108, 0.35), rgba(255, 75, 43, 0.6));
+      border-color: #ff4b2b;
+    }
+    .v-action-btn.dunk.pressed {
       background: linear-gradient(135deg, #ff416c, #ff4b2b);
-      box-shadow: 0 4px 15px rgba(255, 75, 43, 0.4);
+      box-shadow: 0 0 20px rgba(255, 75, 43, 0.7);
     }
 
     .v-action-btn.jump {
+      background: linear-gradient(135deg, rgba(247, 151, 30, 0.35), rgba(255, 210, 0, 0.6));
+      border-color: #ffd200;
+      color: #fff;
+    }
+    .v-action-btn.jump.pressed {
       background: linear-gradient(135deg, #f7971e, #ffd200);
       color: #111;
-      box-shadow: 0 4px 15px rgba(255, 210, 0, 0.4);
+      box-shadow: 0 0 20px rgba(255, 210, 0, 0.7);
     }
 
     .v-action-btn.block {
+      background: linear-gradient(135deg, rgba(138, 35, 135, 0.35), rgba(233, 64, 87, 0.6));
+      border-color: #e94057;
+    }
+    .v-action-btn.block.pressed {
       background: linear-gradient(135deg, #8a2387, #e94057);
-      box-shadow: 0 4px 15px rgba(233, 64, 87, 0.4);
+      box-shadow: 0 0 20px rgba(233, 64, 87, 0.7);
     }
 
     .v-action-btn.sprint {
+      background: linear-gradient(135deg, rgba(17, 153, 142, 0.35), rgba(56, 239, 125, 0.6));
+      border-color: #38ef7d;
+      color: #fff;
+    }
+    .v-action-btn.sprint.pressed {
       background: linear-gradient(135deg, #11998e, #38ef7d);
       color: #000;
-      box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+      box-shadow: 0 0 20px rgba(56, 239, 125, 0.7);
     }
 
     .key-badge {
-      font-size: 9px;
-      opacity: 0.8;
-      background: rgba(0,0,0,0.3);
+      font-size: 8px;
+      font-weight: 700;
+      opacity: 0.95;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 1px 4px;
       border-radius: 4px;
-      margin-top: 2px;
+      line-height: 1;
     }
 
     /* =========================================
@@ -1173,19 +1270,54 @@
       header {
         flex-direction: column;
         align-items: stretch;
+        padding: 8px 12px;
       }
       .scoreboard-hud {
         width: 100%;
         justify-content: space-around;
-        padding: 8px 12px;
+        padding: 6px 10px;
+        gap: 8px;
+      }
+      .score-digits {
+        font-size: 38px;
+      }
+      .clock-time {
+        font-size: 32px;
       }
       .canvas-wrapper {
-        height: 400px;
+        height: clamp(340px, calc(100vh - 190px), 480px);
+      }
+      .virtual-dpad {
+        grid-template-columns: repeat(3, 34px);
+        grid-template-rows: repeat(3, 34px);
+        gap: 3px;
+        padding: 4px;
+      }
+      .dpad-btn {
+        font-size: 13px;
+      }
+      .virtual-actions {
+        gap: 6px;
+        padding: 4px 6px;
       }
       .v-action-btn {
-        width: 62px;
-        height: 62px;
-        font-size: 10px;
+        width: 46px;
+        height: 46px;
+        font-size: 8px;
+        border-radius: 12px;
+      }
+      .v-action-btn .btn-icon {
+        font-size: 13px;
+      }
+      .v-action-btn .btn-name {
+        font-size: 8px;
+      }
+      .key-badge {
+        font-size: 7px;
+        padding: 0 2px;
+      }
+      .hud-sub-label {
+        font-size: 8px;
       }
     }
   </style>
@@ -1283,6 +1415,9 @@
           <button class="btn-action primary" id="btnMatchToggle" onclick="toggleMatchState()">
             <span>▶️</span> Mulai Pertandingan
           </button>
+          <button class="btn-action" id="btnToggleHud" onclick="toggleHudControls()" title="Sembunyikan / Tampilkan HUD Kontrol">
+            <span>🎮</span> <span id="btnToggleHudText">HUD: Aktif</span>
+          </button>
         </div>
       </div>
 
@@ -1332,54 +1467,65 @@
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Interactive Controls Toolbar for Keyboard & Touch -->
-      <div class="touch-controls">
-        <!-- Virtual D-PAD for Mobile/Touch -->
-        <div class="virtual-dpad">
-          <div></div>
-          <button class="dpad-btn" id="dpad-up">▲</button>
-          <div></div>
-          <button class="dpad-btn" id="dpad-left">◀</button>
-          <div class="dpad-btn" style="background:rgba(255,255,255,0.02); border:none;">●</div>
-          <button class="dpad-btn" id="dpad-right">▶</button>
-          <div></div>
-          <button class="dpad-btn" id="dpad-down">▼</button>
-          <div></div>
-        </div>
+        <!-- On-Screen In-Game Skill & Action HUD (No scroll required!) -->
+        <div class="touch-controls" id="courtTouchControls">
+          <!-- D-Pad at bottom-left -->
+          <div class="virtual-dpad-container">
+            <div class="hud-sub-label">GERAK / WASD</div>
+            <div class="virtual-dpad">
+              <div></div>
+              <button class="dpad-btn" id="dpad-up" title="Maju (W / ▲)">▲</button>
+              <div></div>
+              <button class="dpad-btn" id="dpad-left" title="Kiri (A / ◀)">◀</button>
+              <div class="dpad-btn center-dot">●</div>
+              <button class="dpad-btn" id="dpad-right" title="Kanan (D / ▶)">▶</button>
+              <div></div>
+              <button class="dpad-btn" id="dpad-down" title="Mundur (S / ▼)">▼</button>
+              <div></div>
+            </div>
+          </div>
 
-        <!-- Action Control Buttons -->
-        <div class="virtual-actions">
-          <!-- Sprint / Turbo -->
-          <button class="v-action-btn sprint" id="btnActionSprint">
-            <span>⚡ SPRINT</span>
-            <span class="key-badge">SHIFT</span>
-          </button>
+          <!-- Action / Skill Buttons at bottom-right -->
+          <div class="virtual-actions-container">
+            <div class="hud-sub-label">SKILL & KONTROL PEMAIN</div>
+            <div class="virtual-actions">
+              <!-- Sprint / Turbo -->
+              <button class="v-action-btn sprint" id="btnActionSprint" title="Lari Cepat (Shift)">
+                <span class="btn-icon">⚡</span>
+                <span class="btn-name">SPRINT</span>
+                <span class="key-badge">SHIFT</span>
+              </button>
 
-          <!-- Jump / Rebound -->
-          <button class="v-action-btn jump" id="btnActionJump">
-            <span>🚀 JUMP</span>
-            <span class="key-badge">L / W</span>
-          </button>
+              <!-- Jump / Rebound -->
+              <button class="v-action-btn jump" id="btnActionJump" title="Lompat / Rebound (L / W)">
+                <span class="btn-icon">🚀</span>
+                <span class="btn-name">JUMP</span>
+                <span class="key-badge">L</span>
+              </button>
 
-          <!-- Block (Defense) -->
-          <button class="v-action-btn block" id="btnActionBlock">
-            <span>🛡️ BLOCK</span>
-            <span class="key-badge">B / K</span>
-          </button>
+              <!-- Block (Defense) -->
+              <button class="v-action-btn block" id="btnActionBlock" title="Blok Bertahan (B)">
+                <span class="btn-icon">🛡️</span>
+                <span class="btn-name">BLOCK</span>
+                <span class="key-badge">B</span>
+              </button>
 
-          <!-- Layup / Dunk -->
-          <button class="v-action-btn dunk" id="btnActionDunk">
-            <span>💥 DUNK</span>
-            <span class="key-badge">K</span>
-          </button>
+              <!-- Layup / Dunk -->
+              <button class="v-action-btn dunk" id="btnActionDunk" title="Slam Dunk (K)">
+                <span class="btn-icon">💥</span>
+                <span class="btn-name">DUNK</span>
+                <span class="key-badge">K</span>
+              </button>
 
-          <!-- Shoot (Hold for Meter) -->
-          <button class="v-action-btn shoot" id="btnActionShoot">
-            <span>🎯 SHOOT</span>
-            <span class="key-badge">SPACE / J</span>
-          </button>
+              <!-- Shoot (Hold for Meter) -->
+              <button class="v-action-btn shoot" id="btnActionShoot" title="Tembak Bola (Spasi / J)">
+                <span class="btn-icon">🎯</span>
+                <span class="btn-name">SHOOT</span>
+                <span class="key-badge">SPASI</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1753,6 +1899,40 @@
           gain.connect(this.ctx.destination);
           osc.start(t);
           osc.stop(t + 0.8);
+        } catch(e) {}
+      }
+
+      playWhistle() {
+        if (!this.enabled) return;
+        this.init();
+        try {
+          const t = this.ctx.currentTime;
+          const osc1 = this.ctx.createOscillator();
+          const osc2 = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc1.type = 'sine';
+          osc1.frequency.setValueAtTime(2600, t);
+          osc1.frequency.exponentialRampToValueAtTime(2850, t + 0.12);
+          osc1.frequency.exponentialRampToValueAtTime(2550, t + 0.32);
+
+          osc2.type = 'triangle';
+          osc2.frequency.setValueAtTime(2800, t);
+          osc2.frequency.exponentialRampToValueAtTime(3100, t + 0.12);
+          osc2.frequency.exponentialRampToValueAtTime(2750, t + 0.32);
+
+          gain.gain.setValueAtTime(0.2, t);
+          gain.gain.setValueAtTime(0.2, t + 0.22);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc1.start(t);
+          osc2.start(t);
+          osc1.stop(t + 0.35);
+          osc2.stop(t + 0.35);
         } catch(e) {}
       }
     }
@@ -2361,7 +2541,7 @@
       block: false
     };
 
-    // Keyboard Event Listeners
+    // Keyboard Event Listeners with HUD Reactive Highlighting
     window.addEventListener("keydown", (e) => {
       // prevent scrolling with space or arrows
       if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
@@ -2372,53 +2552,97 @@
         startMatch();
       }
 
-      if (e.code === "ArrowUp" || e.code === "KeyW") keys.up = true;
-      if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = true;
-      if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = true;
-      if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = true;
-      if (e.code === "ShiftLeft" || e.code === "ShiftRight") keys.shift = true;
+      if (e.code === "ArrowUp" || e.code === "KeyW") {
+        keys.up = true;
+        document.getElementById("dpad-up")?.classList.add("pressed");
+      }
+      if (e.code === "ArrowDown" || e.code === "KeyS") {
+        keys.down = true;
+        document.getElementById("dpad-down")?.classList.add("pressed");
+      }
+      if (e.code === "ArrowLeft" || e.code === "KeyA") {
+        keys.left = true;
+        document.getElementById("dpad-left")?.classList.add("pressed");
+      }
+      if (e.code === "ArrowRight" || e.code === "KeyD") {
+        keys.right = true;
+        document.getElementById("dpad-right")?.classList.add("pressed");
+      }
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
+        keys.shift = true;
+        document.getElementById("btnActionSprint")?.classList.add("pressed");
+      }
 
       // Shooting trigger (start charging Shot Meter)
       if ((e.code === "Space" || e.code === "KeyJ") && !keys.shoot) {
         keys.shoot = true;
+        document.getElementById("btnActionShoot")?.classList.add("pressed");
         handleShootPress();
       }
 
       // Dunk trigger
       if (e.code === "KeyK") {
         keys.dunk = true;
+        document.getElementById("btnActionDunk")?.classList.add("pressed");
         triggerUserDunk();
       }
 
       // Jump trigger
       if (e.code === "KeyL") {
         keys.jump = true;
+        document.getElementById("btnActionJump")?.classList.add("pressed");
         triggerUserJump();
       }
 
       // Block trigger
       if (e.code === "KeyB") {
         keys.block = true;
+        document.getElementById("btnActionBlock")?.classList.add("pressed");
         triggerUserBlock();
       }
     });
 
     window.addEventListener("keyup", (e) => {
-      if (e.code === "ArrowUp" || e.code === "KeyW") keys.up = false;
-      if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = false;
-      if (e.code === "ArrowLeft" || e.code === "KeyA") keys.left = false;
-      if (e.code === "ArrowRight" || e.code === "KeyD") keys.right = false;
-      if (e.code === "ShiftLeft" || e.code === "ShiftRight") keys.shift = false;
+      if (e.code === "ArrowUp" || e.code === "KeyW") {
+        keys.up = false;
+        document.getElementById("dpad-up")?.classList.remove("pressed");
+      }
+      if (e.code === "ArrowDown" || e.code === "KeyS") {
+        keys.down = false;
+        document.getElementById("dpad-down")?.classList.remove("pressed");
+      }
+      if (e.code === "ArrowLeft" || e.code === "KeyA") {
+        keys.left = false;
+        document.getElementById("dpad-left")?.classList.remove("pressed");
+      }
+      if (e.code === "ArrowRight" || e.code === "KeyD") {
+        keys.right = false;
+        document.getElementById("dpad-right")?.classList.remove("pressed");
+      }
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
+        keys.shift = false;
+        document.getElementById("btnActionSprint")?.classList.remove("pressed");
+      }
 
       // Release shooting button to fire shot with meter timing
       if (e.code === "Space" || e.code === "KeyJ") {
         keys.shoot = false;
+        document.getElementById("btnActionShoot")?.classList.remove("pressed");
         handleShootRelease();
       }
 
-      if (e.code === "KeyK") keys.dunk = false;
-      if (e.code === "KeyL") keys.jump = false;
-      if (e.code === "KeyB") keys.block = false;
+      if (e.code === "KeyK") {
+        keys.dunk = false;
+        document.getElementById("btnActionDunk")?.classList.remove("pressed");
+      }
+      if (e.code === "KeyL") {
+        keys.jump = false;
+        document.getElementById("btnActionJump")?.classList.remove("pressed");
+      }
+      if (e.code === "KeyB") {
+        keys.block = false;
+        document.getElementById("btnActionBlock")?.classList.remove("pressed");
+      }
     });
 
     // Virtual Buttons & Touch Binding
@@ -2665,58 +2889,75 @@
       setTimeout(() => notif.classList.remove("show"), 1800);
     }
 
-    // Possession Reset / Inbound
+    // Possession Reset / Inbound (PINDAH BOLA SETIAP POIN)
     let possessionResetTimeout = null;
-    function schedulePossessionReset(nextPossession) {
+    function schedulePossessionReset(nextPossession, notifMessage) {
+      ball.canPickup = false;
       if (possessionResetTimeout) clearTimeout(possessionResetTimeout);
       possessionResetTimeout = setTimeout(() => {
-        resetPossession(nextPossession);
-      }, 950);
+        resetPossession(nextPossession, notifMessage);
+      }, 750);
     }
 
-    function resetPossession(nextPossession = 'cpu') {
+    function resetPossession(nextPossession = 'cpu', notifMessage) {
+      if (possessionResetTimeout) {
+        clearTimeout(possessionResetTimeout);
+        possessionResetTimeout = null;
+      }
       shotClock = 24;
       updateClockDisplay();
       ball.isShot = false;
       ball.isDunk = false;
       ball.isLayup = false;
+      ball.canPickup = true;
       ball.vx = 0;
       ball.vy = 0;
       ball.vz = 0;
       player.isDunking = false;
       player.hasSlammed = false;
       player.isShooting = false;
+      player.isBlocking = false;
+      player.isJumping = false;
       player.z = 0;
+      player.vx = 0;
+      player.vy = 0;
       cpu.isDunking = false;
       cpu.hasSlammed = false;
       cpu.isShooting = false;
+      cpu.isBlocking = false;
       cpu.z = 0;
+      cpu.vx = 0;
+      cpu.vy = 0;
+      cpu.aiActionTimer = 0;
 
       if (nextPossession === 'cpu') {
-        cpu.x = courtWidth * 0.45;
+        // CPU starts with ball at top of key, Player on defense
+        cpu.x = courtWidth * 0.42;
         cpu.y = courtHeight / 2;
         cpu.facingRight = true;
-        player.x = courtWidth * 0.65;
+        player.x = courtWidth * 0.62;
         player.y = courtHeight / 2;
         player.facingRight = false;
         ball.holder = 'cpu';
-        ball.x = cpu.x;
+        ball.x = cpu.x + 15;
         ball.y = cpu.y;
         ball.z = 10;
-        triggerSplashText(`${cpuLegend.name.split(' ').pop().toUpperCase()} POSSESSION`, "#ff3366");
+        triggerSplashText(notifMessage || `PINDAH BOLA! BOLA UNTUK ${cpuLegend.name.split(' ').pop().toUpperCase()}`, "#ff3366");
       } else {
-        player.x = courtWidth * 0.45;
+        // Player starts with ball at top of key, CPU on defense
+        player.x = courtWidth * 0.42;
         player.y = courtHeight / 2;
         player.facingRight = true;
-        cpu.x = courtWidth * 0.65;
+        cpu.x = courtWidth * 0.62;
         cpu.y = courtHeight / 2;
         cpu.facingRight = false;
         ball.holder = 'user';
-        ball.x = player.x;
+        ball.x = player.x + 15;
         ball.y = player.y;
         ball.z = 10;
-        triggerSplashText(`${userLegend.name.split(' ').pop().toUpperCase()} POSSESSION`, "#00e5ff");
+        triggerSplashText(notifMessage || `PINDAH BOLA! GILIRAN ANDA`, "#00e5ff");
       }
+      sound.playWhistle();
     }
 
     // Particle System (Dunk Sparks & Floor Squeaks)
@@ -2811,6 +3052,7 @@
 
           // Ball drops down straight through the net onto the court!
           ball.holder = null;
+          ball.canPickup = false;
           ball.isDunk = false;
           ball.isShot = false;
           ball.x = hoop.x - 10;
@@ -2821,7 +3063,7 @@
           ball.vy = (Math.random() - 0.5) * 2;
 
           shotClock = 24;
-          schedulePossessionReset('cpu');
+          schedulePossessionReset('cpu', `🏀 SLAM DUNK! PINDAH BOLA KE ${cpuLegend.name.split(' ').pop().toUpperCase()}`);
         }
 
         if (player.dunkAnimStep >= 1.0) {
@@ -2857,6 +3099,7 @@
           updateScoreHUD();
 
           ball.holder = null;
+          ball.canPickup = false;
           ball.isDunk = false;
           ball.isShot = false;
           ball.x = hoop.x - 10;
@@ -2867,7 +3110,7 @@
           ball.vy = (Math.random() - 0.5) * 2;
 
           shotClock = 24;
-          schedulePossessionReset('user');
+          schedulePossessionReset('user', "🏀 LAWAN SLAM DUNK! PINDAH BOLA KE ANDA");
         }
 
         if (cpu.dunkAnimStep >= 1.0) {
@@ -2930,19 +3173,20 @@
               addSparks(hoop.x, hoop.y, 20, "#00ff88");
               
               const pts = ball.pointValue || 2;
+              ball.canPickup = false;
               if (ball.shooter === 'user') {
                 userScore += pts;
-                triggerSplashText(`+${pts} PTS! SWISH!`, "#00ff88");
+                triggerSplashText(`+${pts} PTS! PINDAH BOLA KE LAWAN!`, "#00ff88");
                 if (pts === 3) {
                   gameState.stats.total3pt++;
                   checkTrophies();
                   saveGame();
                 }
-                schedulePossessionReset('cpu');
+                schedulePossessionReset('cpu', `PINDAH BOLA! BOLA UNTUK ${cpuLegend.name.split(' ').pop().toUpperCase()}`);
               } else {
                 cpuScore += pts;
-                triggerSplashText(`${cpuLegend.name.split(' ').pop().toUpperCase()} SCORES +${pts}!`, "#ff3366");
-                schedulePossessionReset('user');
+                triggerSplashText(`${cpuLegend.name.split(' ').pop().toUpperCase()} +${pts}! PINDAH BOLA KE ANDA`, "#ff3366");
+                schedulePossessionReset('user', "PINDAH BOLA! GILIRAN ANDA MENYERANG");
               }
 
               updateScoreHUD();
@@ -2981,7 +3225,7 @@
       }
 
       // Ball Pick-up Detection (Rebound / Loose Ball)
-      if (!ball.holder && !player.isDunking && !cpu.isDunking && ball.z < 35) {
+      if (ball.canPickup !== false && !ball.holder && !player.isDunking && !cpu.isDunking && ball.z < 35) {
         const userDist = Math.hypot(player.x - ball.x, player.y - ball.y);
         const cpuDist = Math.hypot(cpu.x - ball.x, cpu.y - ball.y);
 
@@ -3629,6 +3873,23 @@
       const nextOpponent = candidates[Math.floor(Math.random() * candidates.length)];
       setupMatchCompetitors(userLegend, nextOpponent);
       showToast(`Lawan baru: ${nextOpponent.name} (${nextOpponent.team})`, "🔄");
+    }
+
+    let hudControlsVisible = true;
+    function toggleHudControls() {
+      const hud = document.getElementById("courtTouchControls");
+      const btnText = document.getElementById("btnToggleHudText");
+      if (!hud) return;
+      hudControlsVisible = !hudControlsVisible;
+      if (hudControlsVisible) {
+        hud.style.display = "flex";
+        if (btnText) btnText.innerText = "HUD: Aktif";
+        showToast("HUD Kontrol & Skill Aktif", "🎮");
+      } else {
+        hud.style.display = "none";
+        if (btnText) btnText.innerText = "HUD: Nonaktif";
+        showToast("HUD Kontrol & Skill Dinonaktifkan", "🎮");
+      }
     }
 
     function setupMatchCompetitors(user, cpuP) {
